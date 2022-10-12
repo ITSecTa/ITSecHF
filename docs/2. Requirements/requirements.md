@@ -1,0 +1,1 @@
+[](https://github.com/ITSecTa/ITSecHF/wiki/2.-K%C3%B6vetelm%C3%A9nyek)

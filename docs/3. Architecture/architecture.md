@@ -1,0 +1,1 @@
+[](https://github.com/ITSecTa/ITSecHF/wiki/3.-Architekt%C3%BAra-tervek)

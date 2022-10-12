@@ -1,0 +1,1 @@
+[](https://github.com/ITSecTa/ITSecHF/wiki/4.-Tesztel%C3%A9si-terv)
