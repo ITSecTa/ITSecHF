@@ -9,7 +9,7 @@ bg=black
 fg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLUseCase</id><coordinates><x>360</x><y>340</y><w>110</w><h>100</h></coordinates><panel_attributes>CAFF 
 adatkezelő
 bg=black
-fg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLUseCase</id><coordinates><x>360</x><y>40</y><w>110</w><h>100</h></coordinates><panel_attributes>CAFF natív
+fg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLUseCase</id><coordinates><x>360</x><y>120</y><w>110</w><h>100</h></coordinates><panel_attributes>CAFF natív
 bg=black
 fg=white</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLUseCase</id><coordinates><x>130</x><y>340</y><w>110</w><h>100</h></coordinates><panel_attributes>Hozzáférés-
 védelmi
@@ -73,23 +73,22 @@ r1=Válasz</panel_attributes><additional_attributes>10;10;10;210</additional_att
 Adat lekérdezés
 /módosítás
 /fiók létrehozása
-/törlése</panel_attributes><additional_attributes>10;200;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>440</x><y>120</y><w>50</w><h>250</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+/törlése</panel_attributes><additional_attributes>10;200;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>440</x><y>200</y><w>120</w><h>170</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
 
-???</panel_attributes><additional_attributes>10;230;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>370</x><y>120</y><w>50</w><h>250</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+r1=Feldolgozott fájl</panel_attributes><additional_attributes>10;150;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>370</x><y>200</y><w>130</w><h>170</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
 
-???</panel_attributes><additional_attributes>10;10;10;230</additional_attributes></element><element><id>UMLClass</id><coordinates><x>160</x><y>200</y><w>110</w><h>50</h></coordinates><panel_attributes>valign=center
+r1=Feldolgozandó fájl</panel_attributes><additional_attributes>10;10;10;150</additional_attributes></element><element><id>UMLClass</id><coordinates><x>160</x><y>170</y><w>110</w><h>50</h></coordinates><panel_attributes>valign=center
 halign=center
 Banki szolgáltatás</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>510</x><y>230</y><w>380</w><h>90</h></coordinates><panel_attributes>fg=red
 lt=.
-Internet</panel_attributes><additional_attributes>10;60;50;40;150;20;220;20;300;40;360;70</additional_attributes></element><element><id>Relation</id><coordinates><x>220</x><y>220</y><w>130</w><h>120</h></coordinates><panel_attributes>fg=red
+Internet</panel_attributes><additional_attributes>10;60;50;40;150;20;220;20;300;40;360;70</additional_attributes></element><element><id>Relation</id><coordinates><x>240</x><y>230</y><w>130</w><h>120</h></coordinates><panel_attributes>fg=red
 lt=.
 Bank API</panel_attributes><additional_attributes>10;100;110;10</additional_attributes></element><element><id>Relation</id><coordinates><x>540</x><y>740</y><w>300</w><h>60</h></coordinates><panel_attributes>fg=red
 lt=.
 Adatbázis-elérés</panel_attributes><additional_attributes>10;40;80;20;210;20;280;40</additional_attributes></element><element><id>Relation</id><coordinates><x>310</x><y>480</y><w>220</w><h>60</h></coordinates><panel_attributes>fg=red
 lt=.
-Adatbázis-elérés</panel_attributes><additional_attributes>10;40;40;20;170;20;200;40</additional_attributes></element><element><id>Relation</id><coordinates><x>260</x><y>220</y><w>170</w><h>150</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+Adatbázis-elérés</panel_attributes><additional_attributes>10;40;40;20;170;20;200;40</additional_attributes></element><element><id>Relation</id><coordinates><x>260</x><y>210</y><w>140</w><h>160</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
 
-Tranzakció
-kezdeményezés</panel_attributes><additional_attributes>10;10;120;130</additional_attributes></element><element><id>Relation</id><coordinates><x>230</x><y>240</y><w>160</w><h>150</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+m1=Tranzakció\nkezdeményezés</panel_attributes><additional_attributes>10;10;120;140</additional_attributes></element><element><id>Relation</id><coordinates><x>230</x><y>210</y><w>170</w><h>180</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
 
-Visszaigazolás</panel_attributes><additional_attributes>140;130;10;10</additional_attributes></element></diagram>
+Visszaigazolás</panel_attributes><additional_attributes>140;160;10;10</additional_attributes></element></diagram>

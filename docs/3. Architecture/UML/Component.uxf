@@ -1,6 +1,7 @@
 <diagram program="umletino" version="15.0.0"><zoom_level>8</zoom_level><element><id>UMLGeneric</id><coordinates><x>408</x><y>192</y><w>528</w><h>488</h></coordinates><panel_attributes>symbol=component
 CAFF Webshop</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>456</x><y>520</y><w>152</w><h>72</h></coordinates><panel_attributes>symbol=component
-Natív izé</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>464</x><y>256</y><w>144</w><h>64</h></coordinates><panel_attributes>symbol=component
+Natív CAFF
+komponens</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>464</x><y>256</y><w>144</w><h>64</h></coordinates><panel_attributes>symbol=component
 Felhasználói
 adatkezelő</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>464</x><y>400</y><w>144</w><h>64</h></coordinates><panel_attributes>symbol=component
 CAFF
