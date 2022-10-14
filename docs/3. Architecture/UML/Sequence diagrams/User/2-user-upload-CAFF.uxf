@@ -1,1 +1,58 @@
-<diagram program="umletino" version="15.0.0"><zoom_level>10</zoom_level></diagram>
+<diagram program="umletino" version="15.0.0"><zoom_level>9</zoom_level><element><id>UMLFrame</id><coordinates><x>117</x><y>270</y><w>846</w><h>657</h></coordinates><panel_attributes>alt    
+--
+
+
+
+
+
+
+
+
+
+
+-.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>279</x><y>135</y><w>117</w><h>27</h></coordinates><panel_attributes>_c : CAFF-adatkezelő_</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>522</x><y>135</y><w>117</w><h>36</h></coordinates><panel_attributes>_f : Felhasználói_
+_adatkezelő_</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>567</x><y>162</y><w>27</w><h>54</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;40</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>567</x><y>198</y><w>18</w><h>36</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>567</x><y>225</y><w>27</w><h>90</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;80</additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>153</y><w>27</w><h>54</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;40</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>324</x><y>189</y><w>18</w><h>702</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>333</x><y>180</y><w>252</w><h>36</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+Szerepkör lekérdezése(kezdeményező)</panel_attributes><additional_attributes>260;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>333</x><y>216</y><w>252</w><h>36</h></coordinates><panel_attributes>lt=.&gt;
+Felhasználó</panel_attributes><additional_attributes>260;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>117</x><y>171</y><w>225</w><h>72</h></coordinates><panel_attributes>lt=&lt;-
+Feltöltés(
+kezdeményező,
+felhasználó,
+CAFF_fájl)</panel_attributes><additional_attributes>230;20;10;20</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>765</x><y>135</y><w>117</w><h>36</h></coordinates><panel_attributes>_fn: Natív_
+_komponens_</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>819</x><y>162</y><w>27</w><h>450</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;480</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>819</x><y>594</y><w>18</w><h>45</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>333</x><y>576</y><w>504</w><h>36</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+Validálás(CAFF_fájl)</panel_attributes><additional_attributes>540;20;10;20</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>333</x><y>324</y><w>18</w><h>36</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>333</x><y>279</y><w>180</w><h>63</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+Előfeldolgoz(CAFF_fájl)</panel_attributes><additional_attributes>20;50;50;50;50;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>333</x><y>351</y><w>117</w><h>63</h></coordinates><panel_attributes>lt=.&gt;
+Érvénytelen</panel_attributes><additional_attributes>20;10;50;10;50;50;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>180</x><y>396</y><w>162</w><h>36</h></coordinates><panel_attributes>lt=.&gt;
+Kérés elutasítva</panel_attributes><additional_attributes>160;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>333</x><y>441</y><w>180</w><h>63</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+Előfeldolgoz(CAFF_fájl)</panel_attributes><additional_attributes>20;50;50;50;50;10;10;10</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>333</x><y>486</y><w>18</w><h>36</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>333</x><y>513</y><w>108</w><h>63</h></coordinates><panel_attributes>lt=.&gt;
+Érvényes</panel_attributes><additional_attributes>20;10;50;10;50;50;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>333</x><y>621</y><w>504</w><h>36</h></coordinates><panel_attributes>lt=.&gt;
+Invalid fájl</panel_attributes><additional_attributes>540;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>189</x><y>639</y><w>153</w><h>36</h></coordinates><panel_attributes>lt=.&gt;
+Kérés elutasítva</panel_attributes><additional_attributes>150;20;10;20</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>819</x><y>693</y><w>18</w><h>45</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>333</x><y>675</y><w>504</w><h>36</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+Validálás(CAFF_fájl)</panel_attributes><additional_attributes>540;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>333</x><y>720</y><w>504</w><h>36</h></coordinates><panel_attributes>lt=.&gt;
+Valid fájl</panel_attributes><additional_attributes>540;20;10;20</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>333</x><y>801</y><w>18</w><h>36</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>333</x><y>756</y><w>144</w><h>63</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+Eltárol(CAFF_file)</panel_attributes><additional_attributes>20;50;50;50;50;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>333</x><y>828</y><w>90</w><h>63</h></coordinates><panel_attributes>lt=.&gt;
+Siker</panel_attributes><additional_attributes>20;10;50;10;50;50;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>180</x><y>873</y><w>162</w><h>36</h></coordinates><panel_attributes>lt=.&gt;
+Kérés feldolgozva</panel_attributes><additional_attributes>160;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>819</x><y>630</y><w>27</w><h>81</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;70</additional_attributes></element><element><id>Relation</id><coordinates><x>819</x><y>729</y><w>27</w><h>108</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;100</additional_attributes></element><element><id>UMLFrame</id><coordinates><x>180</x><y>567</y><w>720</w><h>342</h></coordinates><panel_attributes>alt    
+--
+
+
+
+
+
+
+-.</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>180</x><y>675</y><w>117</w><h>63</h></coordinates><panel_attributes>Érvényes CAFF fájl
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>180</x><y>585</y><w>126</w><h>63</h></coordinates><panel_attributes>Érvénytelen CAFF fájl
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>117</x><y>288</y><w>126</w><h>63</h></coordinates><panel_attributes>Érvénytelen fájlformátum
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>288</x><y>18</y><w>126</w><h>63</h></coordinates><panel_attributes>Minden tevékenység naplózva
+style=wordwrap
+	</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>72</y><w>27</w><h>81</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>UMLNote</id><coordinates><x>513</x><y>18</y><w>126</w><h>63</h></coordinates><panel_attributes>Minden tevékenység naplózva
+style=wordwrap
+	</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>765</x><y>18</y><w>126</w><h>63</h></coordinates><panel_attributes>Minden tevékenység naplózva
+style=wordwrap
+	</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>567</x><y>72</y><w>27</w><h>81</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>819</x><y>72</y><w>27</w><h>81</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Text</id><coordinates><x>981</x><y>72</y><w>207</w><h>369</h></coordinates><panel_attributes>A kérés feldolgozása során több validációs lépést foglal magába. 
+Beérkezéskor a CAFF-adatkezelő lekérdezi a kezdeményező szerepkörét. Bár a fájlfeltöltés jelenleg nincs szerepkörhöz kötve, és tulajdonképpen csak az számít, hogy a kezdeményező egy regisztrált használója a rendszernek, ez a lépés a jövőbeni esetleges extra szerepkörök kialakulására készül fel. 
+A szerepkör ellenőrzés után a CAFF-kezelő elvégez egy egyszerű előfeldolgozást, mely során ellenőrzi a feltölteni kívánt fájl egyszerűbb paramétereinek helyességét (pl. megfelelő fájlkiterjesztés, fájlméret stb.). Csak ha ezek megfelelnek lesz továbbküldve a fájl a natív feldolgozóegységnek, ami mélyebb szinten validálja a fájl helyességét. Ha ez is sikeres, akkor lesz csak eltárolva a fájl a rendszerben.
+
+
+
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>117</x><y>432</y><w>126</w><h>63</h></coordinates><panel_attributes>Érvényes fájlformátum
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element></diagram>
