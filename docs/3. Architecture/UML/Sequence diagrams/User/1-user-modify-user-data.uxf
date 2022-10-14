@@ -1,1 +1,57 @@
-<diagram program="umletino" version="15.0.0"><zoom_level>10</zoom_level></diagram>
+<diagram program="umletino" version="15.0.0"><zoom_level>9</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLGeneric</id><coordinates><x>270</x><y>117</y><w>117</w><h>27</h></coordinates><panel_attributes>_c : CAFF-adatkezelő_</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>513</x><y>117</y><w>117</w><h>36</h></coordinates><panel_attributes>_f : Felhasználói_
+_adatkezelő_</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>558</x><y>144</y><w>27</w><h>54</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;40</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>558</x><y>180</y><w>18</w><h>36</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>558</x><y>207</y><w>27</w><h>108</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;100</additional_attributes></element><element><id>Relation</id><coordinates><x>315</x><y>135</y><w>27</w><h>54</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;40</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>315</x><y>171</y><w>18</w><h>738</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>162</y><w>252</w><h>36</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+Szerepkör lekérdezése(kezdeményező)</panel_attributes><additional_attributes>260;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>198</y><w>252</w><h>36</h></coordinates><panel_attributes>lt=.&gt;
+Felhasználó</panel_attributes><additional_attributes>260;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>108</x><y>153</y><w>225</w><h>72</h></coordinates><panel_attributes>lt=&lt;-
+Feltöltés(
+kezdeményező,
+cél_felhasználó,
+adat)</panel_attributes><additional_attributes>230;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>171</x><y>351</y><w>162</w><h>36</h></coordinates><panel_attributes>lt=.&gt;
+Kérés elutasítva</panel_attributes><additional_attributes>160;20;10;20</additional_attributes></element><element><id>UMLFrame</id><coordinates><x>108</x><y>252</y><w>747</w><h>702</h></coordinates><panel_attributes>alt    
+--
+
+
+
+
+
+
+
+
+
+-.</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>108</x><y>270</y><w>189</w><h>63</h></coordinates><panel_attributes>kezdeményező != cél_felhasználó
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>279</x><y>0</y><w>126</w><h>63</h></coordinates><panel_attributes>Minden tevékenység naplózva
+style=wordwrap
+	</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>315</x><y>54</y><w>27</w><h>81</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>UMLNote</id><coordinates><x>504</x><y>0</y><w>126</w><h>63</h></coordinates><panel_attributes>Minden tevékenység naplózva
+style=wordwrap
+	</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>558</x><y>54</y><w>27</w><h>81</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Text</id><coordinates><x>864</x><y>36</y><w>207</w><h>369</h></coordinates><panel_attributes>A kérés feldolgozása során több validációs lépést foglal magába. 
+Beérkezéskor az adatkezelő lekérdezi a kezdeményező szerepkörét. Ez után lekérdezi a cél felhasználót, és ellenőrzi hogy a kezdeményező és a cél_felhasználó ugyanarra a személyre utalnak. Ha igen, akkor a rendszer ellenőrzi a kért adatmódosítást (pl. email cím esetén jó-e a formátum), és vagy elutasítja a kérést, vagy fertőtlenítve visszaadja az adatot. Utóbbi esetben a rendszer a fertőtlenített adattal elvégzi a módosítást.
+
+
+
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>558</x><y>297</y><w>18</w><h>36</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>279</y><w>252</w><h>36</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+Szerepkör lekérdezése(cél_felhasználó)</panel_attributes><additional_attributes>260;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>315</y><w>252</w><h>36</h></coordinates><panel_attributes>lt=.&gt;
+Felhasználó</panel_attributes><additional_attributes>260;20;10;20</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>558</x><y>441</y><w>18</w><h>36</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>459</y><w>252</w><h>36</h></coordinates><panel_attributes>lt=.&gt;
+Felhasználó</panel_attributes><additional_attributes>260;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>423</y><w>252</w><h>36</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+Szerepkör lekérdezése(cél_felhasználó)</panel_attributes><additional_attributes>260;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>558</x><y>324</y><w>27</w><h>135</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;130</additional_attributes></element><element><id>Relation</id><coordinates><x>558</x><y>468</y><w>27</w><h>162</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;160</additional_attributes></element><element><id>Text</id><coordinates><x>108</x><y>405</y><w>189</w><h>63</h></coordinates><panel_attributes>kezdeményező == cél_felhasználó
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>495</y><w>135</w><h>63</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+Ellenőríz(adat)</panel_attributes><additional_attributes>20;50;50;50;50;10;10;10</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>324</x><y>540</y><w>18</w><h>36</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>567</y><w>99</w><h>63</h></coordinates><panel_attributes>lt=.&gt;
+Elutasít</panel_attributes><additional_attributes>20;10;50;10;50;50;10;50</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>324</x><y>828</y><w>18</w><h>36</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>783</y><w>288</w><h>63</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+Módosít(cél_felhasználó, adat_fertőtlenített)</panel_attributes><additional_attributes>20;50;50;50;50;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>855</y><w>90</w><h>63</h></coordinates><panel_attributes>lt=.&gt;
+Siker</panel_attributes><additional_attributes>20;10;50;10;50;50;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>171</x><y>891</y><w>162</w><h>36</h></coordinates><panel_attributes>lt=.&gt;
+Kérés feldolgozva</panel_attributes><additional_attributes>160;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>315</x><y>900</y><w>27</w><h>54</h></coordinates><panel_attributes>lt=.</panel_attributes><additional_attributes>10;10;10;40</additional_attributes></element><element><id>UMLFrame</id><coordinates><x>126</x><y>486</y><w>720</w><h>459</h></coordinates><panel_attributes>alt    
+--
+
+ 
+
+
+
+
+
+
+
+
+-.</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>126</x><y>504</y><w>126</w><h>63</h></coordinates><panel_attributes>Adat elfogadva
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>126</x><y>648</y><w>117</w><h>63</h></coordinates><panel_attributes>Adat elutasítva
+style=wordwrap</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>171</x><y>612</y><w>162</w><h>36</h></coordinates><panel_attributes>lt=.&gt;
+Kérés elutasítva</panel_attributes><additional_attributes>160;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>657</y><w>135</w><h>63</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-
+Ellenőríz(adat)</panel_attributes><additional_attributes>20;50;50;50;50;10;10;10</additional_attributes></element><element><id>UMLGeneric</id><coordinates><x>324</x><y>702</y><w>18</w><h>36</h></coordinates><panel_attributes></panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>729</y><w>153</w><h>63</h></coordinates><panel_attributes>lt=.&gt;
+adat_fertőtlenített</panel_attributes><additional_attributes>20;10;50;10;50;50;10;50</additional_attributes></element></diagram>
