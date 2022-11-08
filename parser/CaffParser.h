@@ -8,6 +8,7 @@
 #include <filesystem>
 #include "CAFF.h"
 #include "CIFF.h"
+#include "bitmap\bitmap_image.hpp"
 
 class CaffParser {
 private:
@@ -15,6 +16,8 @@ private:
 public:
     static std::vector<CAFF::Block> parse_caff(const std::filesystem::path& path);
     static CIFF create_valid_ciff(const std::vector<CAFF::Block>& blocks);
+    static bitmap_image get_caff_preview(CIFF ciff);
+    static void save_caff_preview(CIFF ciff, const std::string& filename);
 };
 
 

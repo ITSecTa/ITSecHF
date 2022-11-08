@@ -122,6 +122,31 @@ CIFF CaffParser::create_valid_ciff(const std::vector<CAFF::Block> &blocks) {
     return ciff;
 }
 
+bitmap_image CaffParser::get_caff_preview(CIFF ciff) {
+    bitmap_image image(ciff.width, ciff.height);
+    image.clear();
+
+    const auto pixel_count = ciff.content_size / 3;
+    uint8_t red[pixel_count], green[pixel_count], blue[pixel_count];
+
+    int px = 0;
+    for (int i = 0; i < ciff.content_size; i += 3) {
+        red[px]     = ciff.image_data[i];
+        green[px]   = ciff.image_data[i + 1];
+        blue[px]    = ciff.image_data[i + 2];
+        px++;
+    }
+
+    image.import_rgb(red, green, blue);
+
+    return image;
+}
+
+void CaffParser::save_caff_preview(CIFF ciff, const std::string& filename) {
+    bitmap_image image = CaffParser::get_caff_preview(ciff);
+    image.save_image(filename);
+}
+
 unsigned long long CaffParser::bytes_to_long(const std::vector<uint8_t> &bytes) {
     unsigned long long value = 0;
     for (size_t i = bytes.size(); i-- > 0;) {
