@@ -3,9 +3,8 @@
 //
 
 #include <string>
-#include <iostream>
+#include <fstream>
 #include "CaffParser.h"
-#include "CAFF.h"
 
 std::vector<CAFF::Block> CaffParser::parse_caff(const std::filesystem::path &path) {
     std::vector<CAFF::Block> blocks{};
@@ -38,7 +37,7 @@ std::vector<CAFF::Block> CaffParser::parse_caff(const std::filesystem::path &pat
 
         blocks.emplace_back(type, block_size, data);
 
-        if (type == '3') {
+        if (type == 3) {
             break;
         }
 

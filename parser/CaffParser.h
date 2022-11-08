@@ -15,7 +15,6 @@ private:
 public:
     static std::vector<CAFF::Block> parse_caff(const std::filesystem::path& path);
     static CIFF create_valid_ciff(const std::vector<CAFF::Block>& blocks);
-    static CAFF::Block get_caff_preview();
 };
 
 

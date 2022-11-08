@@ -6,7 +6,6 @@
 #define PARSER_CIFF_H
 
 
-#include <string>
 #include <vector>
 
 struct CIFF {
