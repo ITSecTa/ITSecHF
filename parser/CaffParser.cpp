@@ -130,7 +130,7 @@ bitmap_image CaffParser::get_caff_preview(CIFF ciff) {
     std::vector<uint8_t> red(pixel_count), green(pixel_count), blue(pixel_count);
 
     int px = 0;
-    for (int i = 0; i < ciff.content_size; i += 3) {
+    for (unsigned long long i = 0; i < ciff.content_size; i += 3) {
         red[px]     = ciff.image_data[i];
         green[px]   = ciff.image_data[i + 1];
         blue[px]    = ciff.image_data[i + 2];
