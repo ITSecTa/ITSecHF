@@ -127,7 +127,7 @@ bitmap_image CaffParser::get_caff_preview(CIFF ciff) {
     image.clear();
 
     const auto pixel_count = ciff.content_size / 3;
-    uint8_t red[pixel_count], green[pixel_count], blue[pixel_count];
+    std::vector<uint8_t> red(pixel_count), green(pixel_count), blue(pixel_count);
 
     int px = 0;
     for (int i = 0; i < ciff.content_size; i += 3) {
@@ -137,7 +137,7 @@ bitmap_image CaffParser::get_caff_preview(CIFF ciff) {
         px++;
     }
 
-    image.import_rgb(red, green, blue);
+    image.import_rgb(red.data(), green.data(), blue.data());
 
     return image;
 }
