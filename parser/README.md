@@ -4,7 +4,9 @@ Ez a modul végzi a CAFF fájlok beolvasását és az előnézet generálását.
 
 ## Build
 
-A program buildeléséhez cmake >=3.22 verzió szükséges. A programot MinGW 12.2.0 fordítóval teszteltük.
+A program buildeléséhez cmake >=3.16 verzió szükséges. A programot MinGW 12.2.0 fordítóval teszteltük. A program a következőképpen buildelhető:
+
+`cmake CMakeLists.txt && make`
 
 ## Használat
 

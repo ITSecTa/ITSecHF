@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.16)
 project(parser)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU") 
@@ -8,4 +8,4 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(parser main.cpp CAFF.h CIFF.h CaffParser.cpp CaffParser.h)
+add_executable(parser main.cpp CAFF.h CIFF.h CaffParser.cpp CaffParser.h bitmap_image.hpp)

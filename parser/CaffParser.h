@@ -8,7 +8,7 @@
 #include <filesystem>
 #include "CAFF.h"
 #include "CIFF.h"
-#include "bitmap\bitmap_image.hpp"
+#include "bitmap_image.hpp"
 
 class CaffParser {
 private:
