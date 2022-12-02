@@ -1,78 +1,47 @@
 import express from "express";
-import { MongoClient } from "mongodb";
 import { passwordStrength } from 'check-password-strength';
-import { randomUUID } from "crypto";
-import  cookieParser  from "cookie-parser";
-import  sessions  from 'express-session';
-import { addUser, getSessionID, isEmailValid, isExistRegistration, isValidUser, setSessionID } from "./helper.js";
+import { addUser, setUserData , isEmailValid, isExistRegistration, isValidUser, setSessionID, findUserBySessionID } from "./helper.js";
+
 
 const app = express();
-const oneDay = 1000 * 60 * 60 * 24;
-
-app.use(sessions({
-    secret: randomUUID(),
-    saveUninitialized:true,
-    cookie: { maxAge: oneDay },
-    resave: false 
-}));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-//serving public file
-app.use(cookieParser());
 
 const PORT = process.env.PORT || 8080;
 
-var sessionChecker = (req, res, next) => {    
-  console.log(`Session Checker: ${req.session.id}`.green);
-  console.log(req.session);
-  if (req.session.profile) {
-      console.log(`Found User Session`.green);
-      next();
-  } else {
-      console.log(`No User Session Found`.red);
-      res.redirect('/login');
-  }
-};
-
-function isAuthenticatedPages(req, res, next) {
-  if (req.session.passport) {
-      res.locals.session = req.session.passport;
-      return next();
-  }
-  res.redirect('/');
-}
-
 app.post('/user/login', async (req,res) => {
-  //TODO : az adabazisbol kikeseni a user,  validalni a jelszot ha minden ok
   const email = req.body.email;
   const password = req.body.password;
 
   if (!email || !password){
     return res.status(400).send({
       message: "Bad request. Email or password missing."
-    })
+    });
   }
-  if(await isValidUser(email, password)){
-    await setSessionID(email, req.session);
-    console.log(req.session) //Todo: lementeni dbbe 
-    return res.status(200).send("OK. You are logged in now.");
-  }
-  else{
-   return res.status(401).send('Bad credentials');
-  }
+  const result = await isValidUser(email, password);
+  res.status(result.code).send(result.data);
 })
 
 
-app.post("/user/modify", isAuthenticatedPages, async (req, res) => {
-     return res.send("Modify");
+app.post("/user/modify", async (req, res) => {
+    if(!req.body.sessionID) {
+      return res.status(401).send({ message: 'Bad credentials' });
+    } 
+    const result = await setUserData(req.body);
+    return res.status(result.code).send(result.data);
 });
 
-app.get("/logout", (req, res) => {
+
+app.post("/user/logout", async (req, res) => {
     console.log(req);
-   req.session.destroy();
-   //TODO: kikell szedni a sessionID t a usertol 
-   res.send('sikeres logout');
+   if(!req.body.sessionID) return res.status(401).send({ message: 'Bad credentials' });
+   const user = await findUserBySessionID(req.body.sessionID);
+   try {
+    await setSessionID(user.userID, null);
+   } catch(error) {
+    return res.status(500).send({ message: error.message });
+   }
+   return res.status(204).send({ message: "OK" });
 })
 
 app.post("/user/register", async (req, res) => {
