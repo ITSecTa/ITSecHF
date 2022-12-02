@@ -52,7 +52,7 @@ const LoginPage = () => {
     if (!emailErr && !passwordErr) {
       let response = await sendForm(formState);
       if (response.ok) {
-        // User registered successfully
+        // User logged in successfully
         setFormState({
           ...formState,
           errorMsgEmail: emailErr,
@@ -76,95 +76,92 @@ const LoginPage = () => {
     }
   };
 
-  const handlePasswordRecovery = () => {
-    // Todo?
-  }
-
   const handleRegister = () => {
     navigate('/register');
   }
 
-    return (
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="fixed">
-          <Toolbar>
-            <Typography align="left" variant="h6" component="div" sx={{ flexGrow: 1 }} color="black">
-              ITSecTa
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Box
-          sx={{
-            marginTop: '160px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center'
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="fixed">
+        <Toolbar>
+          <Typography align="left" variant="h6" component="div" sx={{ flexGrow: 1 }} color="black">
+            ITSecTa
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  autoFocus
-                  helperText={formState.errorMsgEmail}
-                  error={formState.errorMsgEmail !== ''}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  margin="normal"
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  helperText={formState.errorMsgPassword}
-                  error={formState.errorMsgPassword !== ''}
-                />
-              </Grid>
+        </Toolbar>
+      </AppBar>
+      <Box
+        sx={{
+          marginTop: '160px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign in
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, maxWidth: 450 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                helperText={formState.errorMsgEmail}
+                error={formState.errorMsgEmail !== ''}
+              />
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-            {formState.loginMessage && (
-              <Alert severity={formState.loginError ? "error" : "info"}>{formState.loginMessage}</Alert>
-            )}
-            <Grid container justifyContent="flex-end">
-              <Grid item xs>
-                <Link href='' onClick={handlePasswordRecovery} variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item xs>
-                <Link href='' onClick={handleRegister} variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
+            <Grid item xs={12}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                helperText={formState.errorMsgPassword}
+                error={formState.errorMsgPassword !== ''}
+              />
             </Grid>
-          </Box>
+          </Grid>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Sign In
+          </Button>
+          {formState.loginMessage && (
+            <Alert severity={formState.loginError ? "error" : "info"}>{formState.loginMessage}</Alert>
+          )}
+          <Grid container>
+            <Grid item xs={2}>
+              <Link href='/' variant="body2">
+                Go back
+              </Link>
+            </Grid>
+            <Grid item xs={4}></Grid>
+            <Grid item xs={6}>
+              <Link href='' onClick={handleRegister} variant="body2">
+                {"Don't have an account? Sign Up"}
+              </Link>
+            </Grid>
+          </Grid>
         </Box>
       </Box>
-    );
-  }
+    </Box>
+  );
+}
   
   export default LoginPage;

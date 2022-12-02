@@ -2,6 +2,7 @@ import { Alert, AppBar, Avatar, Box, Button, Grid, Link, TextField, Toolbar, Typ
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { passwordStrength } from "check-password-strength";
 
 
 
@@ -28,7 +29,13 @@ const RegisterPage = () => {
 
   const validatePassword = (password: any) => {
     if (!password) return 'Please enter your password.';
-    if ((password as string).length < 7) return 'Password must be at least 7 characters long.';
+    let pwStrength = passwordStrength(password);
+    if (pwStrength.length < 10) return 'Password must be at least 10 characters long.';
+    if (!pwStrength.contains.includes('lowercase')) return 'Password must contain at least one lower-case letter.'
+    if (!pwStrength.contains.includes('uppercase')) return 'Password must contain at least one upper-case letter.'
+    if (!pwStrength.contains.includes('symbol')) return 'Password must contain at least one symbol.'
+    if (!pwStrength.contains.includes('number')) return 'Password must contain at least one number.'
+    if (pwStrength.value !== "Strong") return 'Password too weak.'
     return '';
   }
 
@@ -99,91 +106,98 @@ const RegisterPage = () => {
   }
 
   return (
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="fixed">
-          <Toolbar>
-            <Typography align="left" variant="h6" component="div" sx={{ flexGrow: 1 }} color="black">
-              ITSecTa
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Box
-          sx={{
-            marginTop: '160px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center'
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Register
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="fixed">
+        <Toolbar>
+          <Typography align="left" variant="h6" component="div" sx={{ flexGrow: 1 }} color="black">
+            ITSecTa
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  helperText={formState.errorMsgEmail}
-                  error={formState.errorMsgEmail !== ''}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                  helperText={formState.errorMsgPassword}
-                  error={formState.errorMsgPassword !== ''}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="passwordConfirmation"
-                  label="Confirm password"
-                  type="password"
-                  id="passwordConfirmation"
-                  autoComplete="new-password"
-                  helperText={formState.errorMsgConfirmPassword}
-                  error={formState.errorMsgConfirmPassword !== ''}
-                />
-              </Grid>
+        </Toolbar>
+      </AppBar>
+      <Box
+        sx={{
+          marginTop: '160px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Register
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, maxWidth: 450}}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                helperText={formState.errorMsgEmail}
+                error={formState.errorMsgEmail !== ''}
+              />
             </Grid>
-            {formState.registrationMessage && (
-              <Alert severity={formState.registrationError ? "error" : "info"}>{formState.registrationMessage}</Alert>
-            )}
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign Up
-            </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="" onClick={handleLogin} variant="body2">
-                  Already have an account? Sign in
-                </Link>
-              </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="new-password"
+                helperText={formState.errorMsgPassword}
+                error={formState.errorMsgPassword !== ''}
+              />
             </Grid>
-          </Box>
+            <Grid item xs={12}>
+              <TextField
+                required
+                fullWidth
+                name="passwordConfirmation"
+                label="Confirm password"
+                type="password"
+                id="passwordConfirmation"
+                autoComplete="new-password"
+                helperText={formState.errorMsgConfirmPassword}
+                error={formState.errorMsgConfirmPassword !== ''}
+              />
+            </Grid>
+          </Grid>
+          {formState.registrationMessage && (
+            <Alert severity={formState.registrationError ? "error" : "info"}>{formState.registrationMessage}</Alert>
+          )}
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Sign Up
+          </Button>
+          <Grid container justifyContent="flex-end">
+            <Grid item xs={2}>
+              <Link href='/' variant="body2">
+                Go back
+              </Link>
+            </Grid>
+            <Grid item xs={4}></Grid>
+            <Grid item xs={6}>
+              <Link href="" onClick={handleLogin} variant="body2">
+                Already have an account? Sign in
+              </Link>
+            </Grid>
+          </Grid>
         </Box>
       </Box>
-    );
-  }
+    </Box>
+  );
+}
   
   export default RegisterPage;
