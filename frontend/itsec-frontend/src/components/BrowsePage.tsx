@@ -1,23 +1,14 @@
-import { ImageList, ImageListItem, ImageListItemBar, Box, AppBar, Toolbar, Typography, Button, TextField, InputAdornment, Modal, styled } from "@mui/material";
+import { ImageList, ImageListItem, ImageListItemBar, Box, AppBar, Toolbar, Typography, Button, TextField, InputAdornment, 
+  Modal, styled, Grid, List, ListItem, ListItemAvatar, ListItemText, Avatar } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CAFFFile, defaultCaff } from "../appProps";
+import { CAFFFile, defaultCaff, Comments, defaultComment, User } from "../appProps";
+import { saveAs } from 'file-saver';
 
 interface BrowsePageProps {
   CAFFs: CAFFFile[],
-  loggedIn: boolean
-};
-
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  backgroundColor: 'white',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
+  loggedIn: boolean,
+  user: User,
 };
 
 const BootstrapButton = styled(Button)({
@@ -57,10 +48,42 @@ const BootstrapButton = styled(Button)({
   },
 });
 
+const stringToColor = (string: string) => {
+  let hash = 0;
+  let i;
+
+  /* eslint-disable no-bitwise */
+  for (i = 0; i < string.length; i += 1) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let color = '#';
+
+  for (i = 0; i < 3; i += 1) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += `00${value.toString(16)}`.slice(-2);
+  }
+  /* eslint-enable no-bitwise */
+
+  return color;
+}
+
+const stringAvatar = (name: string) => {
+  return {
+    sx: {
+      bgcolor: stringToColor(name),
+      marginRight: 2
+    },
+    children: name.includes(' ') ? `${name.split(' ')[0][0]}${name.split(' ')[1][0]}` : name[0] + name[name.length - 1],
+  };
+}
+
 const BrowsePage = (props: BrowsePageProps) => {
   const [filter, setFilter] = useState('');
   const [chosenCaff, setChosenCaff] = useState(defaultCaff);
   const [modalOpen, setModalOpen] = useState(false);
+  const [comments, setComments] = useState([defaultComment]);
+  const [currentComment, setCurrentComment] = useState('');
   const navigate = useNavigate();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,6 +94,8 @@ const BrowsePage = (props: BrowsePageProps) => {
     setModalOpen(true);
     const caff:any = props.CAFFs.find(caff => caff.Id === id);
     setChosenCaff(typeof(caff) === 'undefined' ? defaultCaff : caff);
+    //getcomments
+    setComments(Comments);
   };
 
   const handleCloseModal = () => {
@@ -81,8 +106,8 @@ const BrowsePage = (props: BrowsePageProps) => {
   const handleBuy = () => {
     if(!props.loggedIn)
       handleLogin();
-    /*else
-        handle buying*/
+    else
+      saveAs('logo192.png', 'image.jpg')
   };
 
   const handleLogin = () => {
@@ -91,6 +116,33 @@ const BrowsePage = (props: BrowsePageProps) => {
 
   const handleRegister = () => {
     navigate('register');
+  };
+
+  const handleProfile = () => {
+    navigate('profile');
+  };
+
+  const handleComment = () => {
+    if(!props.loggedIn || currentComment === '')
+      return;
+    setComments([...comments, { UserName: props.user.Name, Text: currentComment}]);
+    setCurrentComment('');
+  };
+
+  const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentComment(event.target.value);
+  };
+
+  const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '38%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    backgroundColor: 'white',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4
   };
 
   return (
@@ -104,6 +156,7 @@ const BrowsePage = (props: BrowsePageProps) => {
             component="form"
             sx={{
               '& .MuiTextField-root': { m: 1, width: '25ch' },
+              marginRight: 1
             }}
             noValidate
             autoComplete="off"
@@ -122,7 +175,7 @@ const BrowsePage = (props: BrowsePageProps) => {
               onChange={handleSearchChange}
             />
           </Box>
-          { props.loggedIn ? <div/> : 
+          { props.loggedIn ? <Avatar {...stringAvatar(props.user.Name)} onClick={handleProfile}/> : 
             <>
               <BootstrapButton onClick={handleLogin}>Login</BootstrapButton>
               <BootstrapButton onClick={handleRegister}>Register</BootstrapButton>
@@ -157,24 +210,69 @@ const BrowsePage = (props: BrowsePageProps) => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
         >
-          <Box sx={style}>
-            <Typography id="modal-modal-title" variant="h2" component="h2" align="center" color="#0063cc">
-              {chosenCaff.Name}
-            </Typography>
-            <img
-              width="400px"
-              height="400px"
-              style={{backgroundColor: "white"}}
-              src={`${chosenCaff.Source}?w=248&fit=crop&auto=format`}
-              srcSet={`${chosenCaff.Source}?w=248&fit=crop&auto=format&dpr=2 2x`}
-              alt={chosenCaff.Id.toString()}
-              loading="lazy"
-            />           
-            <BootstrapButton style={{ color: 'white', backgroundColor: '#0063cc', marginTop: "20px"}} onClick={handleBuy}>Buy</BootstrapButton>
-            <Typography id="modal-modal-description" sx={{ mt: 2 }} align="right" color="#0063cc" variant="h5" style={{marginTop: "-35px"}}>
-              {chosenCaff.Price.toFixed(2) + ' ft.'}
-            </Typography>
-          </Box>
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} columns={16} sx={{height: 0}}>
+            <Grid xs={8} sx={{height: 0}}>
+              <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h2" component="h2" align="center" color="#0063cc">
+                  {chosenCaff.Name}
+                </Typography>
+                <img
+                  width="400px"
+                  height="400px"
+                  style={{backgroundColor: "white"}}
+                  src={`${chosenCaff.Source}?w=248&fit=crop&auto=format`}
+                  srcSet={`${chosenCaff.Source}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                  alt={chosenCaff.Id.toString()}
+                  loading="lazy"
+                />           
+                <BootstrapButton style={{ color: 'white', backgroundColor: '#0063cc', marginTop: "20px"}} onClick={handleBuy}>Buy</BootstrapButton>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }} align="right" color="#0063cc" variant="h5" style={{marginTop: "-35px"}}>
+                  {chosenCaff.Price.toFixed(2) + ' ft.'}
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid xs={8} sx={{height: 0}}>
+              <Box sx={{height: 0}}>
+                <List sx={{ maxWidth: 360, maxHeight: 500, left: 60, top: 73.5, bgcolor: 'background.paper', overflow: 'auto',  }}>
+                  {comments.map((comment) => (
+                    <ListItem alignItems="flex-start" key={comment.Text + comment.UserName}>
+                      <ListItemAvatar>
+                        <Avatar {...stringAvatar(comment.UserName)} />
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={comment.UserName}
+                        secondary={
+                          <>
+                            <Typography
+                              sx={{ display: 'inline' }}
+                              component="span"
+                              variant="body2"
+                              color="text.primary"
+                            >
+                              {comment.Text}
+                            </Typography>                           
+                          </>
+                        }
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+                  <Box sx={{ width: 360, height: 87, top: 65, left: 60, position: 'relative', bgcolor: 'background.paper', overflow: 'auto',  }}>
+                    <TextField
+                      margin="normal"
+                      id="comment-text"
+                      label="Comment"
+                      name="Comment"
+                      autoFocus
+                      multiline
+                      value={currentComment}
+                      onChange={handleCommentChange}
+                    />
+                    <BootstrapButton style={{ position: 'fixed', color: 'white', backgroundColor: props.loggedIn ? '#0063cc' : 'grey', marginTop: "20px", marginLeft: "20px"}} onClick={handleComment}>Comment</BootstrapButton>
+                  </Box>
+                </Box>
+              </Grid>
+          </Grid>
       </Modal>
     </Box>
   );

@@ -10,6 +10,11 @@ export interface CAFFFile {
   Source: string,
 };
 
+export interface Comment {
+  UserName: string,
+  Text: string
+};
+
 export const AppUser: User = {
     Name: "user1",
     Password: "fafaf"
@@ -42,3 +47,20 @@ export const CAFFs: CAFFFile[] = [
   { Id: 22, Name: "caff22", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
   { Id: 23, Name: "caff23", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
 ];
+
+export const Comments: Comment[] = [
+  { UserName: "Valami User", Text: "Some comment" },
+  { UserName: "user2", Text: "Short comment"},
+  { UserName: "usgagaer3", Text: "Very long comenttg sgjaglna glnagjag jagalgbagb aglblgb algbalgbalgba lgbalgbalgbal gbalgbal bgalgblagla gblagab"},
+  { UserName: "user1", Text: "Multi\nLine\nComment"},
+  { UserName: "usgagager5", Text: "Some comment"},
+  { UserName: "user2", Text: "Multi\nLine\nComment"},
+  { UserName: "user6", Text: "Some comment"},
+  { UserName: "usefagagr6", Text: "Very long comentt gs gjaglnag lnagjagj agalgbagbagl blgbalgba lgbalgbalgbal gbalgbalgba lgbalbg algblagl agblagab"},
+  { UserName: "user1", Text: "Some comment"},
+  { UserName: "user7", Text: "Multi\nLine\nComment"},
+  { UserName: "user4", Text: "Some comment"},
+  { UserName: "useragagag3", Text: "Short comment"},
+];
+
+export const defaultComment: Comment = { UserName: "", Text: "" };

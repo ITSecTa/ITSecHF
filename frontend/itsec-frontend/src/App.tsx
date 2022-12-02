@@ -23,7 +23,7 @@ const App = () => {
         <Routes>
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
-          <Route path="/" element={<BrowsePage CAFFs={caffs} loggedIn={isLoggedIn}/>} />
+          <Route path="/" element={<BrowsePage CAFFs={caffs} loggedIn={isLoggedIn} user={user}/>} />
           <Route path="profile" element={<ProfilePage User={user}/>} />
         </Routes>
       </BrowserRouter>
