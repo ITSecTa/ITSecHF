@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CAFFFile, defaultCaff, Comments, defaultComment, User } from "../appProps";
 import { saveAs } from 'file-saver';
+import { fileURLToPath } from "url";
 
 interface BrowsePageProps {
   CAFFs: CAFFFile[],
@@ -84,6 +85,7 @@ const BrowsePage = (props: BrowsePageProps) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [comments, setComments] = useState([defaultComment]);
   const [currentComment, setCurrentComment] = useState('');
+  const [selectedFile, setSelectedFile] = useState(new File([], ""));
   const navigate = useNavigate();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,7 +109,7 @@ const BrowsePage = (props: BrowsePageProps) => {
     if(!props.loggedIn)
       handleLogin();
     else
-      saveAs('logo192.png', 'image.jpg')
+      saveAs('logo192.png', 'image.png')
   };
 
   const handleLogin = () => {
@@ -145,6 +147,24 @@ const BrowsePage = (props: BrowsePageProps) => {
     p: 4
   };
 
+	const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) 
+      return;
+
+		setSelectedFile(event.target.files[0]);
+	};
+
+	const handleUpload = () => {
+    if(selectedFile.name === "")
+      return;
+
+    if(!selectedFile.name.endsWith('.caff')) {
+      alert('File extension is not appropriate!');
+      return;
+    }
+    //send to backend
+	};
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed">
@@ -152,6 +172,10 @@ const BrowsePage = (props: BrowsePageProps) => {
           <Typography align="left" variant="h6" component="div" sx={{ flexGrow: 1 }} color="black">
             ITSecTa
           </Typography>
+          <Box sx={{paddingRight: 85}}>
+            <BootstrapButton onClick={handleUpload}>Upload</BootstrapButton>
+            <input style={{paddingLeft: 30}} type="file" name="file" onChange={changeHandler} />
+          </Box>
           <Box
             component="form"
             sx={{
