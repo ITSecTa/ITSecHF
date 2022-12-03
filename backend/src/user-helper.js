@@ -126,12 +126,18 @@ export async function findUserByUserID(userID) {
 }
 
 export async function setUserData(body, userInfo) {
-    // Ha admin van akkor a sessionId HELYETT userId alapjan kell lekerni a usert
-    // ha az admin nem kuld userId t akkor a sajat adatait modositja szoval ez nem bug hanem feature :) 
     let user;
+    let token = null;
+    let needToken; 
     console.log("setuserdata");
     console.log(body);
-    user = await findUserByUserID(userInfo.userID);
+    if(body.userID){ 
+        user = await findUserByUserID(body.userID);
+        needToken = false;
+    } else {
+        user = userInfo;
+        needToken = true;
+    }
     console.log(user);
     if(!user) return { code: 401, message: 'Bad credentials.'};
     
@@ -149,6 +155,7 @@ export async function setUserData(body, userInfo) {
             const hash = await hashPassword(body.newPassword);
             const updateDocument = { $set: { email: body.newEmail, password: hash } };
             await users.updateOne(filter, updateDocument);
+            if(neeedToken) token = generateAccessToken(body.newEmail, userInfo.userID);
           } catch(error){
             return { code: 500, data: { message: 'Internal server error.' }};
         }  
@@ -172,12 +179,13 @@ export async function setUserData(body, userInfo) {
       try{
         const updateDocument = { $set: { email: body.newEmail } };
         await users.updateOne(filter, updateDocument);
+        if(neeedToken) token = generateAccessToken(body.newEmail, userInfo.userID);
       } catch(error){
         return { code: 500, data: { message: 'Internal server error.' }};
         }  
-    };
-// ha nincs email es nincs jelszo siman visszater 204 el. 
-  return { code: 200, data: { message: 'Modify was successful.', token: generateAccessToken(body.newEmail, userInfo.userID) }};
+    }
+    if(token != null) return { code: 200, data: { message: 'Modify was successful.', token: token}};
+  return { code: 200, data: { message: 'Modify was successful.' }};
 }
 
 export async function isAdmin(userID) {
@@ -185,9 +193,8 @@ export async function isAdmin(userID) {
     return (user.admin) ? true : false;
 }
 
-export async function getUsersForAdmin(userID) {
+export async function getUsersForAdmin() {
     try {
-        if(await !isAdmin(userID)) return { code: 401, data: { message: 'Bad credentials'}};
         const listOfUsers = await users.find({}).toArray();
         return { code: 200, data: listOfUsers };
       } catch(error) {
@@ -198,8 +205,7 @@ export async function getUsersForAdmin(userID) {
 export async function modifyUserByAdmin(body, userInfo) {
     console.log(body);
     try {
-        if(!await isAdmin(userInfo.userID)) return { code: 401, message: 'Bad credentials8979'};
-        return await setUserData(body);
+        return await setUserData(body, userInfo);
     } catch (error) {
         return { code: 500, data: { message: "Internal server error" }};
     }
@@ -207,19 +213,10 @@ export async function modifyUserByAdmin(body, userInfo) {
 
 export async function deleteUserByAdmin(body) {
     try {
-        if(!await isAdmin(userInfo.userID)) return { code: 401, message: 'Bad credentials8979'};
         const filter = { userID: body.userID };
-        const result = await users.deleteOne(filter);
-        if (result.deletedCount === 1) {
-            return { code: 200, data: { message: "Delete was successful." }};
-          } else {
-            return {code: 404, data:{ message: "No documents matched the query. Deleted 0 documents."}};
-          }
+        await users.deleteOne(filter);
+        return { code: 204, data: { message: "Delete was successful." }};
         } catch (error) {
         return { code: 500, data: { message: "Internal server error" }};
     }
 }
-
-//Todo: delete admin
-//Todo: user modify
-//Todo: admin modify

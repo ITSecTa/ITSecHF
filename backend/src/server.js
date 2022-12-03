@@ -10,7 +10,8 @@ import { addUser,
    deleteUserByAdmin,
    authenticateToken,
    authenticateAdminToken
-  } from "./helper.js";
+  } from "./user-helper.js";
+import { getCaffCollection } from "./caff-helper.js";
 import dotenv from 'dotenv'; 
 
 
@@ -89,20 +90,38 @@ app.post("/user/register", async (req, res) => {
 
 //ADMIN ENPOINTS
 app.get('/admin/users', authenticateAdminToken, async (req,res) => {
-  const result = await getUsersForAdmin(req.user.userID);
+  const result = await getUsersForAdmin();
   return res.status(result.code).send(result.data);
 });
 
 app.post('/admin/modify', authenticateAdminToken, async (req, res) => {
   console.log(req.body);
-  const result = await modifyUserByAdmin(req.body, req.user.userID);
+  const result = await modifyUserByAdmin(req.body, req.user);
   return res.status(result.code).send(result.data);
 });
 
 app.post('/admin/delete', authenticateAdminToken, async (req, res) => {
   console.log(req.body);
-  const result =  await deleteUserByAdmin(req.body, req.user.userID);
+  const result =  await deleteUserByAdmin(req.body, req.user);
   return res.status(result.code).send(result.data);
+});
+
+//CAFF ENDPOINTS
+app.get('/caff/preview', async (req,res) => {
+  const result = await getCaffCollection();
+  return res.status(result.code).send(result.data);
+});
+
+app.post('/caff/upload', authenticateToken, async (req, res) => {
+ 
+});
+
+app.get('/caff/purchase', authenticateToken, async (req, res) => {
+ 
+}); 
+
+app.delete('/caff/delete', authenticateAdminToken, async (req,res) => {
+  
 })
 
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
