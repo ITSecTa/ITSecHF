@@ -5,17 +5,20 @@ import { addUser,
    isEmailValid, 
    isExistRegistration,
    isValidUser,
-   setSessionID,
-   findUserBySessionID, 
    getUsersForAdmin,
    modifyUserByAdmin,
-   deleteUserByAdmin
+   deleteUserByAdmin,
+   authenticateToken,
+   authenticateAdminToken
   } from "./helper.js";
+import dotenv from 'dotenv'; 
 
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+dotenv.config();
 
 const PORT = process.env.PORT || 8080;
 
@@ -34,26 +37,13 @@ app.post('/user/login', async (req,res) => {
 })
 
 
-app.post("/user/modify", async (req, res) => {
-    if(!req.body.sessionID) {
-      return res.status(401).send({ message: 'Bad credentials' });
-    } 
-    const result = await setUserData(req.body);
+app.post("/user/modify", authenticateToken, async (req, res) => {
+    console.log("token:");
+    console.log(req.user);
+    console.log("tokenvege");
+    const result = await setUserData(req.body, req.user);
     return res.status(result.code).send(result.data);
 });
-
-
-app.post("/user/logout", async (req, res) => {
-    console.log(req);
-   if(!req.body.sessionID) return res.status(401).send({ message: 'Bad credentials' });
-   const user = await findUserBySessionID(req.body.sessionID);
-   try {
-    await setSessionID(user.userID, null);
-   } catch(error) {
-    return res.status(500).send({ message: error.message });
-   }
-   return res.status(204).send({ message: "OK" });
-})
 
 app.post("/user/register", async (req, res) => {
   console.log(req.body);
@@ -98,23 +88,20 @@ app.post("/user/register", async (req, res) => {
 });
 
 //ADMIN ENPOINTS
-app.get('/admin/users', async (req,res) => {
-  if(!req.body.sessionID) return res.status(401).send({ message: 'Bad credentials' });
-  const result = await getUsersForAdmin(req.body.sessionID);
+app.get('/admin/users', authenticateAdminToken, async (req,res) => {
+  const result = await getUsersForAdmin(req.user.userID);
   return res.status(result.code).send(result.data);
 });
 
-app.post('/admin/modify', async (req, res) => {
-  if(!req.body.sessionID) return res.status(401).send({ message: 'Bad credentials' });
+app.post('/admin/modify', authenticateAdminToken, async (req, res) => {
   console.log(req.body);
-  const result = await modifyUserByAdmin(req.body);
+  const result = await modifyUserByAdmin(req.body, req.user.userID);
   return res.status(result.code).send(result.data);
 });
 
-app.post('/admin/delete', async (req, res) => {
-  if(!req.body.sessionID) return res.status(401).send({ message: 'Bad credentials' });
+app.post('/admin/delete', authenticateAdminToken, async (req, res) => {
   console.log(req.body);
-  const result =  await deleteUserByAdmin(req.body);
+  const result =  await deleteUserByAdmin(req.body, req.user.userID);
   return res.status(result.code).send(result.data);
 })
 

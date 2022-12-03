@@ -3,6 +3,7 @@ import emailValidator from "deep-email-validator";
 import * as argon2 from "argon2";
 import { passwordStrength } from 'check-password-strength';
 import * as crypto from "crypto";
+import jwt from 'jsonwebtoken';
 
 const url = 'mongodb://127.0.0.1:27017';
 const client = new MongoClient(url);
@@ -27,6 +28,47 @@ async function verifyPasswordWithHash(password, hash) {
     return await argon2.verify(hash, password, hashingConfig);
 }
 
+export function generateAccessToken(email, id) {
+    return jwt.sign({ userID: id, email: email }, process.env.TOKEN_SECRET, { expiresIn: '7200s' });
+}
+
+export async function authenticateAdminToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+  
+    if (token == null) return res.sendStatus(401);
+  
+    jwt.verify(token, process.env.TOKEN_SECRET, async (err, user) => {
+      console.log(err);
+  
+      if (err) return res.sendStatus(403);
+      if (!await isExistRegistration(user.email)) return res.sendStatus(401);
+      if (!await isAdmin(user.userID)) return res.sendStatus(401);
+
+      req.user = user;
+  
+      next();
+    })
+}
+
+export async function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+  
+    if (token == null) return res.sendStatus(401);
+  
+    jwt.verify(token, process.env.TOKEN_SECRET, async (err, user) => {
+      console.log(err);
+  
+      if (err) return res.sendStatus(403);
+      if (!await isExistRegistration(user.email)) return res.sendStatus(401);
+  
+      req.user = user;
+  
+      next();
+    })
+}
+
 export async function isEmailValid(email) {
     return emailValidator.validate(email)
 }
@@ -49,7 +91,6 @@ export async function addUser(email, password) {
       const newuser = {
         email: email,
         password: hash,
-        sessionID: null,
         userID: crypto.randomUUID(), 
       }
        result = await users.insertOne(newuser);
@@ -67,37 +108,16 @@ export async function getUserByEmail(email) {
 }
 
 export async function isValidUser(email, password) {
-    let sessionID =  crypto.randomUUID();
     const user = await getUserByEmail(email);
     console.log(user);
     if(!user) return { code: 401, data: { message: 'Bad credential.'}};
     if(await verifyPasswordWithHash(password, user.password)) {
-        try {
-            await setSessionID(user.userID, sessionID );
-        } catch(error) {
-            return { code: 500, data: { message: 'Internal server error'}};
-        }
         if(user.admin) {
-            return  { code: 200, data: { sessionID: sessionID, admin: true }};
+            return  { code: 200, data: { token: generateAccessToken(user.email, user.userID), admin: true }};
         }
-        return  { code: 200, data: { sessionID: sessionID }};
+        return  { code: 200, data: { token: generateAccessToken(user.email, user.userID) }};
     }
     return { code: 401, data: { message: 'Bad credential.'}};
-}
-
-export async function setSessionID(userID, session) {
-    const filter = { userID: userID };
-    const updateDocument = {
-        $set: {
-            sessionID: session,
-         },
-    };
-   console.log(await users.updateOne(filter, updateDocument));
-}
-
-export async function findUserBySessionID(session) {
-    const result = await users.findOne( { sessionID: { $eq: session } });
-    return result;
 }
 
 export async function findUserByUserID(userID) {
@@ -105,17 +125,13 @@ export async function findUserByUserID(userID) {
     return result;
 }
 
-export async function setUserData(body) {
+export async function setUserData(body, userInfo) {
     // Ha admin van akkor a sessionId HELYETT userId alapjan kell lekerni a usert
     // ha az admin nem kuld userId t akkor a sajat adatait modositja szoval ez nem bug hanem feature :) 
     let user;
     console.log("setuserdata");
     console.log(body);
-    if(body.userID) {
-        user = await findUserByUserID(body.userID);
-    } else {
-        user = await findUserBySessionID(body.sessionID);
-    }
+    user = await findUserByUserID(userInfo.userID);
     console.log(user);
     if(!user) return { code: 401, message: 'Bad credentials.'};
     
@@ -128,7 +144,7 @@ export async function setUserData(body) {
 
           if (!valid) return { code: 400, data: { message: 'Please provide a valid email address.' }};
     
-          if(await isExistRegistration(body.newEmail)) return { code: 400, data: { message: 'Email address is already exist.'}};
+          if(await isExistRegistration(body.newEmail)) return { code: 400, data: { message: 'Email address already exist.'}};
           try{
             const hash = await hashPassword(body.newPassword);
             const updateDocument = { $set: { email: body.newEmail, password: hash } };
@@ -161,17 +177,17 @@ export async function setUserData(body) {
         }  
     };
 // ha nincs email es nincs jelszo siman visszater 204 el. 
-  return { code: 200, data: { message: 'Modify was successful.' }};
+  return { code: 200, data: { message: 'Modify was successful.', token: generateAccessToken(body.newEmail, userInfo.userID) }};
 }
 
-export async function isAdmin(sessionID) {
-        const user = await findUserBySessionID(sessionID);
-        return (user.admin) ? true : false;
+export async function isAdmin(userID) {
+    const user = await findUserByUserID(userID);
+    return (user.admin) ? true : false;
 }
 
-export async function getUsersForAdmin(sessionID) {
+export async function getUsersForAdmin(userID) {
     try {
-        if(await !isAdmin(sessionID)) return { code: 401, data: { message: 'Bad credentials'}};
+        if(await !isAdmin(userID)) return { code: 401, data: { message: 'Bad credentials'}};
         const listOfUsers = await users.find({}).toArray();
         return { code: 200, data: listOfUsers };
       } catch(error) {
@@ -179,10 +195,10 @@ export async function getUsersForAdmin(sessionID) {
     }
 }
 
-export async function modifyUserByAdmin(body) {
+export async function modifyUserByAdmin(body, userInfo) {
     console.log(body);
     try {
-        if(!await isAdmin(body.sessionID)) return { code: 401, message: 'Bad credentials8979'};
+        if(!await isAdmin(userInfo.userID)) return { code: 401, message: 'Bad credentials8979'};
         return await setUserData(body);
     } catch (error) {
         return { code: 500, data: { message: "Internal server error" }};
@@ -191,7 +207,7 @@ export async function modifyUserByAdmin(body) {
 
 export async function deleteUserByAdmin(body) {
     try {
-        if(!await isAdmin(body.sessionID)) return { code: 401, message: 'Bad credentials8979'};
+        if(!await isAdmin(userInfo.userID)) return { code: 401, message: 'Bad credentials8979'};
         const filter = { userID: body.userID };
         const result = await users.deleteOne(filter);
         if (result.deletedCount === 1) {
