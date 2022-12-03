@@ -127,7 +127,7 @@ const BrowsePage = (props: BrowsePageProps) => {
   const handleComment = () => {
     if(!props.loggedIn || currentComment === '')
       return;
-    setComments([...comments, { UserName: props.user.Name, Text: currentComment}]);
+    setComments([...comments, { UserName: props.user.Email, Text: currentComment}]);
     setCurrentComment('');
   };
 
@@ -199,7 +199,7 @@ const BrowsePage = (props: BrowsePageProps) => {
               onChange={handleSearchChange}
             />
           </Box>
-          { props.loggedIn ? <Avatar {...stringAvatar(props.user.Name)} onClick={handleProfile}/> : 
+          { props.loggedIn ? <Avatar {...stringAvatar(props.user.Email)} onClick={handleProfile}/> : 
             <>
               <BootstrapButton onClick={handleLogin}>Login</BootstrapButton>
               <BootstrapButton onClick={handleRegister}>Register</BootstrapButton>

@@ -1,6 +1,6 @@
 export interface User {
-  Name: string,
-  Password: string
+  Email: string,
+  Token: string
 };
 
 export interface CAFFFile {
@@ -16,8 +16,8 @@ export interface Comment {
 };
 
 export const AppUser: User = {
-    Name: "user1",
-    Password: "fafaf"
+    Email: "user1@gmail.com",
+    Token: "abc123"
 };
 
 export const defaultCaff: CAFFFile = { Id: -1, Name: "", Price: -1, Source: ""};
