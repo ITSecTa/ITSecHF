@@ -69,6 +69,7 @@ export async function getUserByEmail(email) {
 export async function isValidUser(email, password) {
     let sessionID =  crypto.randomUUID();
     const user = await getUserByEmail(email);
+    console.log(user);
     if(!user) return { code: 401, data: { message: 'Bad credential.'}};
     if(await verifyPasswordWithHash(password, user.password)) {
         try {
@@ -76,7 +77,10 @@ export async function isValidUser(email, password) {
         } catch(error) {
             return { code: 500, data: { message: 'Internal server error'}};
         }
-        return  { code: 201, data: { sessionID: sessionID }};
+        if(user.admin) {
+            return  { code: 200, data: { sessionID: sessionID, admin: true }};
+        }
+        return  { code: 200, data: { sessionID: sessionID }};
     }
     return { code: 401, data: { message: 'Bad credential.'}};
 }
@@ -96,9 +100,22 @@ export async function findUserBySessionID(session) {
     return result;
 }
 
+export async function findUserByUserID(userID) {
+    const result = await users.findOne({ userID: { $eq: userID }});
+    return result;
+}
+
 export async function setUserData(body) {
     // Ha admin van akkor a sessionId HELYETT userId alapjan kell lekerni a usert
-    const user = await findUserBySessionID(body.sessionID);
+    // ha az admin nem kuld userId t akkor a sajat adatait modositja szoval ez nem bug hanem feature :) 
+    let user;
+    console.log("setuserdata");
+    console.log(body);
+    if(body.userID) {
+        user = await findUserByUserID(body.userID);
+    } else {
+        user = await findUserBySessionID(body.sessionID);
+    }
     console.log(user);
     if(!user) return { code: 401, message: 'Bad credentials.'};
     
@@ -145,6 +162,46 @@ export async function setUserData(body) {
     };
 // ha nincs email es nincs jelszo siman visszater 204 el. 
   return { code: 200, data: { message: 'Modify was successful.' }};
+}
+
+export async function isAdmin(sessionID) {
+        const user = await findUserBySessionID(sessionID);
+        return (user.admin) ? true : false;
+}
+
+export async function getUsersForAdmin(sessionID) {
+    try {
+        if(await !isAdmin(sessionID)) return { code: 401, data: { message: 'Bad credentials'}};
+        const listOfUsers = await users.find({}).toArray();
+        return { code: 200, data: listOfUsers };
+      } catch(error) {
+        return {code: 500, data: { message: 'Internal server error.'}};
+    }
+}
+
+export async function modifyUserByAdmin(body) {
+    console.log(body);
+    try {
+        if(!await isAdmin(body.sessionID)) return { code: 401, message: 'Bad credentials8979'};
+        return await setUserData(body);
+    } catch (error) {
+        return { code: 500, data: { message: "Internal server error" }};
+    }
+}
+
+export async function deleteUserByAdmin(body) {
+    try {
+        if(!await isAdmin(body.sessionID)) return { code: 401, message: 'Bad credentials8979'};
+        const filter = { userID: body.userID };
+        const result = await users.deleteOne(filter);
+        if (result.deletedCount === 1) {
+            return { code: 200, data: { message: "Delete was successful." }};
+          } else {
+            return {code: 404, data:{ message: "No documents matched the query. Deleted 0 documents."}};
+          }
+        } catch (error) {
+        return { code: 500, data: { message: "Internal server error" }};
+    }
 }
 
 //Todo: delete admin

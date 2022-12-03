@@ -1,6 +1,16 @@
 import express from "express";
 import { passwordStrength } from 'check-password-strength';
-import { addUser, setUserData , isEmailValid, isExistRegistration, isValidUser, setSessionID, findUserBySessionID } from "./helper.js";
+import { addUser,
+   setUserData , 
+   isEmailValid, 
+   isExistRegistration,
+   isValidUser,
+   setSessionID,
+   findUserBySessionID, 
+   getUsersForAdmin,
+   modifyUserByAdmin,
+   deleteUserByAdmin
+  } from "./helper.js";
 
 
 const app = express();
@@ -9,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 8080;
 
+//USER ENDPOINTS
 app.post('/user/login', async (req,res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -81,10 +92,30 @@ app.post("/user/register", async (req, res) => {
   try {
     result_id = await addUser(req.body.email, req.body.password);
   } catch (error) {
-    res.status(500).send({message: "Internal server error. Could not created the registration."})
+    return res.status(500).send({message: "Internal server error. Could not created the registration."})
   } 
   return res.status(201).send({message: "OK", id: result_id});
 });
 
+//ADMIN ENPOINTS
+app.get('/admin/users', async (req,res) => {
+  if(!req.body.sessionID) return res.status(401).send({ message: 'Bad credentials' });
+  const result = await getUsersForAdmin(req.body.sessionID);
+  return res.status(result.code).send(result.data);
+});
+
+app.post('/admin/modify', async (req, res) => {
+  if(!req.body.sessionID) return res.status(401).send({ message: 'Bad credentials' });
+  console.log(req.body);
+  const result = await modifyUserByAdmin(req.body);
+  return res.status(result.code).send(result.data);
+});
+
+app.post('/admin/delete', async (req, res) => {
+  if(!req.body.sessionID) return res.status(401).send({ message: 'Bad credentials' });
+  console.log(req.body);
+  const result =  await deleteUserByAdmin(req.body);
+  return res.status(result.code).send(result.data);
+})
 
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
