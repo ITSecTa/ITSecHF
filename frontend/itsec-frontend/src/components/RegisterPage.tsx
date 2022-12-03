@@ -4,10 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { passwordStrength } from "check-password-strength";
 
+interface RegisterPageProps {
+  LoggedIn: boolean
+};
 
-
-const RegisterPage = () => {
+const RegisterPage = (props: RegisterPageProps) => {
   const navigate = useNavigate();
+
+  if(props.LoggedIn)
+    navigate('/');
 
   const [formState, setFormState] = useState({
     email: '',

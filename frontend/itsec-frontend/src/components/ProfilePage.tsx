@@ -6,11 +6,15 @@ import { passwordStrength } from 'check-password-strength'
 import { useNavigate } from "react-router-dom";
 
 interface ProfilePageProps {
-    User: User
+    User: User,
+    LoggedIn: boolean
 };
 
 const ProfilePage = (props: ProfilePageProps) => {
   const navigate = useNavigate();
+
+  if(!props.LoggedIn)
+    navigate('/login');
 
   const [modalOpen, setModalOpen] = useState(false);
   const [formState, setFormState] = useState({

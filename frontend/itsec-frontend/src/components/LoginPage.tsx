@@ -3,8 +3,15 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-const LoginPage = () => {
+interface LoginPageProps {
+  LoggedIn: boolean
+};
+
+const LoginPage = (props: LoginPageProps) => {
   const navigate = useNavigate();
+
+  if(props.LoggedIn)
+    navigate('/');
 
   const [formState, setFormState] = useState({
     email: '',
