@@ -1,18 +1,23 @@
 import { Alert, AppBar, Avatar, Box, Button, Grid, Link, TextField, Toolbar, Typography } from "@mui/material";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { User } from "../appProps";
 
 interface LoginPageProps {
   LoggedIn: boolean
+  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>
+  setUser: React.Dispatch<React.SetStateAction<User>>
 };
 
 const LoginPage = (props: LoginPageProps) => {
   const navigate = useNavigate();
 
-  if(props.LoggedIn)
-    navigate('/');
-
+  useEffect(() => {
+    if (props.LoggedIn)
+      navigate('/');
+  }, [navigate, props.LoggedIn]);
+  
   const [formState, setFormState] = useState({
     email: '',
     password: '',
@@ -34,10 +39,25 @@ const LoginPage = (props: LoginPageProps) => {
     return '';
   }
 
-  const sendForm = (payload: any): any => {
-    //TODO
-    console.log(payload);
-    return {ok: true};
+  const sendLoginRequest = async (email: string, password: string): Promise<Response> => {
+    const response = await fetch('http://localhost:8080/user/login', {
+      method: 'POST',
+      headers: {
+       'Accept': 'application/json',
+       'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "email": email,
+        "password": password
+      })
+    });
+    return response;
+  }
+
+  const saveCredentials = (email: string, token: string) => {
+    console.log(token);
+    props.setUser({Email: email, Token: token});
+    props.setIsLoggedIn(true);
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -57,7 +77,7 @@ const LoginPage = (props: LoginPageProps) => {
     });
     
     if (!emailErr && !passwordErr) {
-      let response = await sendForm(formState);
+      let response = await sendLoginRequest(email!!.toString(), password!!.toString());
       if (response.ok) {
         // User logged in successfully
         setFormState({
@@ -67,6 +87,7 @@ const LoginPage = (props: LoginPageProps) => {
           loginMessage: 'Logged in successfully!',
           loginError: false
         });
+        saveCredentials(email!!.toString(), (await response.json()).token);
         await new Promise(res => setTimeout(res, 2000));
         navigate('/');
       }

@@ -50,10 +50,19 @@ const RegisterPage = (props: RegisterPageProps) => {
    return '';
   }
 
-  const sendForm = (payload: any): any => {
-    //TODO
-    console.log(payload);
-    return {ok: true};
+  const sendRegisterRequest = async (email: string, password: string): Promise<Response> => {
+    const response = await fetch('http://localhost:8080/user/register', {
+      method: 'POST',
+      headers: {
+       'Accept': 'application/json',
+       'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "email": email,
+        "password": password
+      })
+    });
+    return response;
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -78,7 +87,7 @@ const RegisterPage = (props: RegisterPageProps) => {
     });
 
     if (!emailErr && !passwordErr && !passwordConfirmErr) {
-      let response = await sendForm(formState);
+      let response = await sendRegisterRequest(email!!.toString(), password!!.toString());
       if (response.ok) {
         // User registered successfully
         setFormState({
@@ -91,6 +100,17 @@ const RegisterPage = (props: RegisterPageProps) => {
         });
         await new Promise(res => setTimeout(res, 2000));
         navigate('/login');
+      }
+      else if (response.status === 400) {
+        // Server refused registration
+        setFormState({
+          ...formState,
+          errorMsgEmail: emailErr,
+          errorMsgPassword: passwordErr,
+          errorMsgConfirmPassword: passwordConfirmErr,
+          registrationMessage: 'Failed to register: Invalid email or password.',
+          registrationError: true
+        });
       }
       else {
         // Server encountered error
