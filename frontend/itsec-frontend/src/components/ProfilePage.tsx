@@ -16,11 +16,9 @@ const ProfilePage = (props: ProfilePageProps) => {
   if(!props.LoggedIn)
     navigate('/login');
 
-  const [modalOpen, setModalOpen] = useState(false);
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [formState, setFormState] = useState({
-    email: '',
-    password: '',
-    passwordConfirm: '',
     formError: false,
     formMessage: '',
     errorMsgEmail: '',
@@ -65,12 +63,32 @@ const ProfilePage = (props: ProfilePageProps) => {
    return '';
   }
 
-  const handleOpenModal = () => {
-    setModalOpen(true);
+  const handleOpenEmailModal = () => {
+    setEmailModalOpen(true);
   }
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
+  const handleCloseEmailModal = () => {
+    setEmailModalOpen(false);
+    setFormState({
+      ...formState,
+      errorMsgEmail: '',
+      errorMsgPassword: '',
+      errorMsgConfirmPassword: ''
+    });
+  }    
+  
+  const handleOpenPasswordModal = () => {
+    setPasswordModalOpen(true);
+  }
+
+  const handleClosePasswordModal = () => {
+    setPasswordModalOpen(false);
+    setFormState({
+      ...formState,
+      errorMsgEmail: '',
+      errorMsgPassword: '',
+      errorMsgConfirmPassword: ''
+    });
   }    
 
   const handleLogout = () => {
@@ -78,43 +96,40 @@ const ProfilePage = (props: ProfilePageProps) => {
     navigate('/');
   }
 
-  const sendForm = (payload: any): any => {
+  const sendEmailChangeRequest = (newAddress: string): any => {
     //TODO
-    console.log(payload);
-    return {ok: true};
+    console.log(newAddress);
+    return {ok: false};
   }
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const sendPasswordChangeRequest = (newPassword: any, newPasswordConfirm: any): any => {
+    //TODO
+    console.log(newPassword);
+    console.log(newPasswordConfirm);
+    return {ok: false};
+  }
+
+  const handleEmailSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget); 
-
     let email = data.get('email');
-    let password = data.get('password');
-    let passwordConfirm = data.get('passwordConfirmation');
-
     let emailErr = validateEmail(email);
-    let passwordErr = validatePassword(password);
-    let passwordConfirmErr = validatePasswordConfirm(password, passwordConfirm);
 
     setFormState({
       ...formState,
       formMessage: '',
       formError: false,
       errorMsgEmail: emailErr,
-      errorMsgPassword: passwordErr,
-      errorMsgConfirmPassword: passwordConfirmErr
     });
 
-    if (!emailErr && !passwordErr && !passwordConfirmErr) {
-      let response = await sendForm(formState);
-      setModalOpen(false);
+    if (!emailErr) {
+      let response = await sendEmailChangeRequest(email!!.toString());
+      setEmailModalOpen(false);
       if (response.ok) {
         setFormState({
           ...formState,
           errorMsgEmail: emailErr,
-          errorMsgPassword: passwordErr,
-          errorMsgConfirmPassword: passwordConfirmErr,
-          formMessage: 'Details changed successfully!',
+          formMessage: 'Email address changed successfully!',
           formError: false
         });
       }
@@ -123,6 +138,47 @@ const ProfilePage = (props: ProfilePageProps) => {
         setFormState({
           ...formState,
           errorMsgEmail: emailErr,
+          formMessage: 'Failed to change. Please try again later.',
+          formError: true
+        });
+      }
+    }
+  }
+
+  const handlePasswordSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget); 
+
+    let password = data.get('password');
+    let passwordConfirm = data.get('passwordConfirmation');
+
+    let passwordErr = validatePassword(password);
+    let passwordConfirmErr = validatePasswordConfirm(password, passwordConfirm);
+
+    setFormState({
+      ...formState,
+      formMessage: '',
+      formError: false,
+      errorMsgPassword: passwordErr,
+      errorMsgConfirmPassword: passwordConfirmErr
+    });
+
+    if (!passwordErr && !passwordConfirmErr) {
+      let response = await sendPasswordChangeRequest(password, passwordConfirm);
+      setPasswordModalOpen(false);
+      if (response.ok) {
+        setFormState({
+          ...formState,
+          errorMsgPassword: passwordErr,
+          errorMsgConfirmPassword: passwordConfirmErr,
+          formMessage: 'Password changed successfully!',
+          formError: false
+        });
+      }
+      else {
+        // Server encountered error
+        setFormState({
+          ...formState,
           errorMsgPassword: passwordErr,
           errorMsgConfirmPassword: passwordConfirmErr,
           formMessage: 'Failed to change. Please try again later.',
@@ -155,39 +211,43 @@ const ProfilePage = (props: ProfilePageProps) => {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Box display="flex" justifyContent="center">
-                <Typography component="h1" variant="h5">
                   Profile
-                </Typography>
               </Box>
             </Grid>   
             <Grid item xs={4}>
               <Box display="flex" justifyContent="flex-start">
-                <Typography component="body" >
                   Email:
-                </Typography>
               </Box>
             </Grid>              
-            <Grid item xs={8}>
+            <Grid item xs={6}>
               <Box display="flex" justifyContent="flex-end">
-                <Typography component="body" >
-                  {props.User.Name}
-                </Typography>
+                  {props.User.Email}
               </Box>
             </Grid>    
+            <Grid item xs={2}>
+              <Box display="flex" justifyContent="flex-end">
+                <Link href='#' onClick={handleOpenEmailModal} variant="body2">
+                  (change)
+                </Link>
+              </Box>
+            </Grid>
             <Grid item xs={4}>
               <Box display="flex" justifyContent="flex-start">
-                <Typography component="body" >
                   Password:
-                </Typography>
               </Box>
             </Grid>              
-            <Grid item xs={8}>
+            <Grid item xs={6}>
               <Box display="flex" justifyContent="flex-end">
-                <Typography component="body" >
                   ••••••••••
-                </Typography>
               </Box>
             </Grid>    
+            <Grid item xs={2}>
+              <Box display="flex" justifyContent="flex-end">
+                <Link href='#' onClick={handleOpenPasswordModal} variant="body2">
+                  (change)
+                </Link>
+              </Box>
+            </Grid>   
             <Grid item xs={12}>
               {formState.formMessage && (
                 <Alert severity={formState.formError ? "error" : "info"}>{formState.formMessage}</Alert>
@@ -197,15 +257,6 @@ const ProfilePage = (props: ProfilePageProps) => {
         </Box>
         <Box sx={{ mt: 5, width: 400 }}>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Button
-              fullWidth
-              color="primary"
-              variant="contained"
-              onClick={handleOpenModal}>
-                Change
-              </Button>
-            </Grid>
             <Grid item xs={12}>
               <Button
               fullWidth
@@ -224,11 +275,11 @@ const ProfilePage = (props: ProfilePageProps) => {
         </Box>
       </Box>
       <Modal
-        open={modalOpen}
-        onClose={handleCloseModal}
+        open={emailModalOpen}
+        onClose={handleCloseEmailModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description">
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={style}>
+          <Box component="form" onSubmit={handleEmailSubmit} noValidate sx={style}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
@@ -242,6 +293,24 @@ const ProfilePage = (props: ProfilePageProps) => {
                   error={formState.errorMsgEmail !== ''}
                 />
               </Grid>
+            </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}>
+              Submit
+            </Button>
+          </Box>
+      </Modal>
+      <Modal
+        open={passwordModalOpen}
+        onClose={handleClosePasswordModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description">
+          <Box component="form" onSubmit={handlePasswordSubmit} noValidate sx={style}>
+            <Grid container spacing={2}>
+            </Grid>
               <Grid item xs={12}>
                 <TextField
                   required
@@ -251,6 +320,7 @@ const ProfilePage = (props: ProfilePageProps) => {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  sx={{mt: 1}}
                   helperText={formState.errorMsgPassword}
                   error={formState.errorMsgPassword !== ''}
                 />
@@ -264,11 +334,11 @@ const ProfilePage = (props: ProfilePageProps) => {
                   type="password"
                   id="passwordConfirmation"
                   autoComplete="new-password"
+                  sx={{mt: 1}}
                   helperText={formState.errorMsgConfirmPassword}
                   error={formState.errorMsgConfirmPassword !== ''}
                 />
               </Grid>
-            </Grid>
             <Button
               type="submit"
               fullWidth
@@ -278,6 +348,8 @@ const ProfilePage = (props: ProfilePageProps) => {
             </Button>
           </Box>
       </Modal>
+
+      
     </Box>
   );
 }
