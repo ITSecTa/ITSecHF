@@ -3,6 +3,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { passwordStrength } from "check-password-strength";
+import { backendURL } from "../globalVars";
 
 interface RegisterPageProps {
   LoggedIn: boolean
@@ -53,7 +54,7 @@ const RegisterPage = (props: RegisterPageProps) => {
   }
 
   const sendRegisterRequest = async (email: string, password: string): Promise<Response> => {
-    const response = await fetch('http://localhost:8080/user/register', {
+    const response = await fetch(backendURL + '/user/register', {
       method: 'POST',
       headers: {
        'Accept': 'application/json',

@@ -4,6 +4,7 @@ import { User } from "../appProps";
 import { useEffect, useState } from "react";
 import { passwordStrength } from 'check-password-strength'
 import { useNavigate } from "react-router-dom";
+import { backendURL } from "../globalVars";
 
 interface ProfilePageProps {
     User: User,
@@ -106,7 +107,7 @@ const ProfilePage = (props: ProfilePageProps) => {
   }
 
   const sendEmailChangeRequest = async (newEmail: string): Promise<Response> => {
-    const response = await fetch('http://localhost:8080/user/modify', {
+    const response = await fetch(backendURL + '/user/modify', {
       method: 'POST',
       headers: {
        'Accept': 'application/json',
@@ -121,7 +122,7 @@ const ProfilePage = (props: ProfilePageProps) => {
   }
 
   const sendPasswordChangeRequest = async (newPassword: string): Promise<Response> => {
-    const response = await fetch('http://localhost:8080/user/modify', {
+    const response = await fetch(backendURL + '/user/modify', {
       method: 'POST',
       headers: {
        'Accept': 'application/json',

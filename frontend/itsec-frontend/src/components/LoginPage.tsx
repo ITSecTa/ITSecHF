@@ -3,6 +3,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { User } from "../appProps";
+import { backendURL } from "../globalVars";
 
 interface LoginPageProps {
   LoggedIn: boolean
@@ -40,7 +41,7 @@ const LoginPage = (props: LoginPageProps) => {
   }
 
   const sendLoginRequest = async (email: string, password: string): Promise<Response> => {
-    const response = await fetch('http://localhost:8080/user/login', {
+    const response = await fetch(backendURL + '/user/login', {
       method: 'POST',
       headers: {
        'Accept': 'application/json',
