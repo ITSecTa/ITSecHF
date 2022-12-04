@@ -14,7 +14,7 @@ Az applikáció MongoDB adatbázist használ. A MongoDB szervert a localhost:270
 
 ### Natív 
 
-A natív rész fordításához lásd a [megfelelő](https://github.com/ITSecTa/ITSecHF/blob/main/parser/README.md) leírást.
+A natív rész fordításához hozd létre a `parser\cmake-build-debug` mappát, majd ezen belül add ki a `cmake ..\CMakeLists.txt && make` parancsot.
 
 ### Backend indítása:
 
