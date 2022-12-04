@@ -17,6 +17,10 @@ std::vector<CAFF::Block> CaffParser::parse_caff(const std::filesystem::path &pat
         throw std::domain_error("No such file!");
     }
 
+    if (file_size(path) > 10'000'000) { // 10 MB
+        throw std::length_error("CAFF size can't be bigger than 10 MB!");
+    }
+
     std::ifstream file{path, std::ios::binary | std::ios::in};
     std::vector<uint8_t> caff{std::istreambuf_iterator<char>(file), {}};
 
@@ -143,12 +147,26 @@ bitmap_image CaffParser::get_caff_preview(CIFF ciff) {
     }
 
     image.import_rgb(red.data(), green.data(), blue.data());
+    
+    const unsigned int MAXDIM = 500;
+    if (image.width() > MAXDIM || image.height() > MAXDIM) {
+        unsigned int newWidth = image.width() > MAXDIM ? MAXDIM : image.width();
+        unsigned int newHeight = image.height() > MAXDIM ? MAXDIM : image.height();
 
+        bitmap_image resized(newWidth, newHeight);
+        if (image.region(0, 0, newWidth, newHeight, resized))
+            return resized;
+    }
     return image;
 }
 
 void CaffParser::save_caff_preview(const CIFF& ciff, const std::string& filename) {
     bitmap_image image = CaffParser::get_caff_preview(ciff);
+
+    if (std::vector{image.data()}.size() * sizeof(unsigned char) > 1'000'000) { // 1 MB
+        throw std::length_error("BMP image data can't be bigger than 1 MB!");
+    }
+
     image.save_image(filename);
 }
 
