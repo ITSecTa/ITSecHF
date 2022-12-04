@@ -81,12 +81,10 @@ export async function isEmailValid(email) {
 
 export async function isExistRegistration(email) {
 	const result = await getUserByEmail(email);
-	if (result) return true;
-	return false;
+	return !!(result);
 }
 
 export async function addUser(email, password) {
-	let result;
 	try {
 		const hash = await hashPassword(password);
 		const newuser = {
@@ -94,7 +92,7 @@ export async function addUser(email, password) {
 			password: hash,
 			userID: crypto.randomUUID(),
 		};
-		result = await users.insertOne(newuser);
+		await users.insertOne(newuser);
 		return { code: 201, data: { message: "Created a new user.", userID: newuser.userID } };
 	} catch (error) {
 		return { code: 500, data: { message: 'Internal server error.' } };

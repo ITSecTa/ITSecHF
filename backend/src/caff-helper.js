@@ -112,8 +112,14 @@ export async function deleteCommentByAdmin(caffId, body) {
 }
 
 export async function modifyCommentByAdmin(caffId, body) {
-	if (!body.commentID || !body.text) return { code: 400, data: { message: 'Bad request. Some data is missing.' } };
-    if (body.text.length > 500) return { code: 400, data: { message: 'Bad request. The comment text is too long. The maximum size is 500 characters.' } };
+	if (!body.commentID || !body.text) { 
+        return { code: 400, data: { message: 'Bad request. Some data is missing.' } };
+    }
+
+    if (body.text.length > 500) {
+        return { code: 400, data: { message: 'Bad request. The comment text is too long. The maximum size is 500 characters.' } };
+    }
+
 	try {
 		await caff.updateOne({ caffID: caffId, "comments.commentID": body.commentID }, { $set: { "comments.$.text": body.text } });
 		return { code: 204, data: { message: 'Modify was successful' } };

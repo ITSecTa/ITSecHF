@@ -23,12 +23,22 @@ import { getCaffCollection,
   modifyCommentByAdmin,
   getCaffByCaffId } from './caff-helper.js';
 import dotenv from 'dotenv';
+
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from "fs";
+import https from "https";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const output_directory = path.join(__dirname, '/../temp/');
+
+const httpsOptions = {
+  key: fs.readFileSync('backend\\res\\fixtures\\keys\\client-key.pem'),
+  cert: fs.readFileSync('backend\\res\\fixtures\\keys\\client-cert.pem')
+};
+
+const useHttps = true;
 
 const app = express();
 
@@ -46,8 +56,8 @@ app.use(
 	})
 );
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({limit: '10mb'}));
+app.use(express.urlencoded({limit: '10mb', extended: true }));
 
 dotenv.config();
 const PORT = process.env.PORT || 8080;
@@ -185,4 +195,9 @@ app.post('/comments/modify/:caffId', authenticateAdminToken, async (req, res) =>
 	return res.status(result.code).send(result.data);
 });
 
-app.listen(PORT, console.log(`Server started on port ${PORT}`));
+if (useHttps) {
+  https.createServer(httpsOptions, app).listen(PORT);
+  console.log(`HTTPS Server started on port ${PORT}`);
+} else {
+  app.listen(PORT, console.log(`Server started on port ${PORT}`));
+}
