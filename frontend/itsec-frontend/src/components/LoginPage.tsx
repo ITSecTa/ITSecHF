@@ -16,7 +16,7 @@ const LoginPage = (props: LoginPageProps) => {
   useEffect(() => {
     if (props.LoggedIn)
       navigate('/');
-  }, [navigate, props.LoggedIn]);
+  }, []);
   
   const [formState, setFormState] = useState({
     email: '',
@@ -29,7 +29,7 @@ const LoginPage = (props: LoginPageProps) => {
 
   const validateEmail = (value: any) => {
     if (!value) return 'Please enter your email address.';
-    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!emailRegex.test(value)) return 'Invalid email address.';
     return '';
   }
@@ -90,8 +90,16 @@ const LoginPage = (props: LoginPageProps) => {
         saveCredentials(email!!.toString(), (await response.json()).token);
         await new Promise(res => setTimeout(res, 2000));
         navigate('/');
-      }
-      else {
+      } else if (response.status === 401) {
+        // Invalid email or pass
+        setFormState({
+          ...formState,
+          errorMsgEmail: emailErr,
+          errorMsgPassword: passwordErr,
+          loginMessage: 'Invalid email address or password.',
+          loginError: true
+        });
+      } else {
         // Server encountered error
         setFormState({
           ...formState,

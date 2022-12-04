@@ -1,7 +1,7 @@
 import { Alert, AppBar, Avatar, Box, Button, Grid, Link, TextField, Toolbar, Typography } from "@mui/material";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { passwordStrength } from "check-password-strength";
 
 interface RegisterPageProps {
@@ -11,8 +11,10 @@ interface RegisterPageProps {
 const RegisterPage = (props: RegisterPageProps) => {
   const navigate = useNavigate();
 
-  if(props.LoggedIn)
-    navigate('/');
+  useEffect(() => {
+    if (props.LoggedIn)
+      navigate('/');
+  }, []);
 
   const [formState, setFormState] = useState({
     email: '',
@@ -27,7 +29,7 @@ const RegisterPage = (props: RegisterPageProps) => {
   
   const validateEmail = (value: any) => {
     if (!value) return 'Please enter your email address.';
-    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!emailRegex.test(value)) return 'Invalid email address.';
     return '';
   }
