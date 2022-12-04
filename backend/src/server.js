@@ -1,7 +1,6 @@
 import express from "express";
 import fileupload from "express-fileupload";
 import cors from "cors";
-import multer from "multer";
 import { passwordStrength } from 'check-password-strength';
 import { addUser,
    setUserData , 
@@ -20,7 +19,8 @@ import { getCaffCollection,
    getCommentsByCaffId, 
    addCommentToCaff,
    deleteCommentByAdmin,
-   modifyCommentByAdmin } from "./caff-helper.js";
+   modifyCommentByAdmin,
+   getCaffByCaffId } from "./caff-helper.js";
 import dotenv from 'dotenv'; 
 
 //const upload_folder_path = __dirname + "/../temp/";
@@ -31,7 +31,7 @@ const __filename = fileURLToPath(import.meta.url);
 
 // 👇️ "/home/john/Desktop/javascript"
 const __dirname = path.dirname(__filename);
-const output_directory = path.join(__dirname, "/../temp");
+const output_directory = path.join(__dirname, "/../temp/");
 
 const app = express();
 app.use(
@@ -46,38 +46,6 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
-app.post("/upload-file", async (req, res) => {
-  try {
-      if (!req.files) {
-          res.send({
-              status: "failed",
-              message: "No file uploaded",
-          });
-      } else {
-          let file = req.files.file;
-          //let fileExtension = file.name.split('.')[file.name.split('.').length - 1];
-
-          console.log(file);
-
-          file.mv(output_directory + "/test.png");
-          console.log("upload mappa utan")
-          res.send({
-              status: "success",
-              message: "File is uploaded",
-              data: {
-                  name: file.name,
-                  mimetype: file.mimetype,
-                  size: file.size,
-              },
-          });
-      }
-  } catch (err) {
-      res.status(500).send(err);
-  }
-});
-
 
 dotenv.config();
 const PORT = process.env.PORT || 8080;
@@ -170,13 +138,31 @@ app.get('/caff/preview', async (req,res) => {
 });
 
 app.post('/caff/upload', async (req, res) => {
-  const result = await uploadCaffFile(req.body);
-  return res.status(result.code).send(result.data);
-  //TODO: fajlfeltoltes sikerült
+  try {
+    if (!req.files) {
+        res.send({
+            status: "failed",
+            message: "No file uploaded",
+        });
+    } else {
+        let file = req.files.file
+        console.log(file);
+        
+        await file.mv(output_directory + file.name);
+        console.log("upload mappa utan");
+
+        const result = await uploadCaffFile(file.name);
+        return res.status(result.code).send(result.data);
+    } 
+  } catch (err) {
+      res.status(500).send({ message: err });
+  }
 });
 
-app.get('/caff/purchase', async (req, res) => {
- //TODO el se kezdtuk
+app.get('/caff/purchase/:caffId', async (req, res) => {
+ if(!req.params.caffId) res.status(404).send({message: "Not found"});
+  const result = await getCaffByCaffId(req.params.caffId);
+  return res.status(result.code).send(result.data);
 }); 
 
 app.delete('/caff/delete', authenticateAdminToken, async (req,res) => {
