@@ -13,11 +13,12 @@
 class CaffParser {
 private:
     static unsigned long long bytes_to_long(const std::vector<uint8_t>& bytes);
+    static bool is_content_size_valid(unsigned long long ciff_data_size, const CIFF& ciff) ;
 public:
     static std::vector<CAFF::Block> parse_caff(const std::filesystem::path& path);
     static CIFF create_valid_ciff(const std::vector<CAFF::Block>& blocks);
     static bitmap_image get_caff_preview(CIFF ciff);
-    static void save_caff_preview(CIFF ciff, const std::string& filename);
+    static void save_caff_preview(const CIFF& ciff, const std::string& filename) ;
 };
 
 

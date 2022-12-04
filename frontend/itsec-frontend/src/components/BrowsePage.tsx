@@ -176,7 +176,7 @@ const BrowsePage = (props: BrowsePageProps) => {
         const response = await sendBuyRequest(chosenCaff.caffID);
         if(response.ok) {
           const buyResponse = await response.json();
-          if (buyResponse.caffName.endsWith('caff')) {
+          if (buyResponse.caffName.endsWith('.caff')) {
             saveAs(b64toBlob(buyResponse.file), buyResponse.caffName);
           } else {
             saveAs(b64toBlob(buyResponse.file), buyResponse.caffName + '.caff');
@@ -294,7 +294,11 @@ const BrowsePage = (props: BrowsePageProps) => {
 
   const uploadCAFF = async (data: File) => {
     const formData = new FormData();
-    formData.append('file', new File([data], fileName, {type: data.type}));
+    if (fileName.endsWith('.caff')) {
+      formData.append('file', new File([data], fileName, {type: data.type}));
+    } else {
+      formData.append('file', new File([data], fileName + '.caff', {type: data.type}));
+    }
     const response = await fetch(backendURL + '/caff/upload', {
       method: 'POST',
       headers: {
