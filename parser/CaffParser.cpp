@@ -144,6 +144,15 @@ bitmap_image CaffParser::get_caff_preview(CIFF ciff) {
 
     image.import_rgb(red.data(), green.data(), blue.data());
 
+    const unsigned int MAXDIM = 500;
+    if (image.width() > MAXDIM || image.height() > MAXDIM) {
+        unsigned int newWidth = image.width() > MAXDIM ? MAXDIM : image.width();
+        unsigned int newHeight = image.height() > MAXDIM ? MAXDIM : image.height();
+
+        bitmap_image resized(newWidth, newHeight);
+        if (image.region(0, 0, newWidth, newHeight, resized))
+            return resized;
+    }
     return image;
 }
 
