@@ -360,7 +360,7 @@ const BrowsePage = (props: BrowsePageProps) => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
         >
-          <Grid container sx={{position: 'absolute', top: '13.8%', left: '25%'}}>
+          <Grid container sx={{position: 'absolute', top: '13.8%', left: '25%', width: 824}}>
             <Box sx={style}>
               <Typography id="modal-modal-title" variant="h2" component="h2" align="center" color="#0063cc">
                 {chosenCaff.caffName}
