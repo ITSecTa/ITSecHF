@@ -3,7 +3,7 @@ import { ImageList, ImageListItem, ImageListItemBar, Box, AppBar, Toolbar, Typog
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DOMPurify from 'dompurify';
-import { CAFFFile, defaultCaff, Comments, defaultComment, User } from "../appProps";
+import { CAFFFile, defaultCaff, Comments, defaultComment, User, Comment } from "../appProps";
 import { saveAs } from 'file-saver';
 import { backendURL } from "../globalVars";
 
@@ -11,8 +11,14 @@ interface BrowsePageProps {
   CAFFs: CAFFFile[],
   loggedIn: boolean,
   user: User,
-  token: string
+  token: string,
+  addCaffToList: (caff: CAFFFile) => Promise<void>
 };
+
+interface BuyResponse {
+  CaffName: string,
+  File: string
+}
 
 const BootstrapButton = styled(Button)({
   color: 'black',
@@ -109,13 +115,14 @@ const BrowsePage = (props: BrowsePageProps) => {
 
   const handleOpenModal = async (id: number) => {
     setModalOpen(true);
-    const caff:any = props.CAFFs.find(caff => caff.Id === id);
+    const caff:any = props.CAFFs.find(caff => caff.CaffID === id);
     setChosenCaff(typeof(caff) === 'undefined' ? defaultCaff : caff);
 
     try {
       const response = await getCommentsForCAFF(id);
       if(response.ok) {
-        setComments(await response.json());
+        const commentsResponse: Comment[] = await response.json();
+        setComments(commentsResponse);
       } else {
         setComments(Comments);
       }
@@ -141,26 +148,46 @@ const BrowsePage = (props: BrowsePageProps) => {
     setChosenCaff(defaultCaff);
   };
 
+  const b64toBlob = (b64Data: string, contentType='', sliceSize=512) => {
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+  
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      const slice = byteCharacters.slice(offset, offset + sliceSize);
+  
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+  
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+  
+    const blob = new Blob(byteArrays, {type: contentType});
+    return blob;
+  }
+
   const handleBuy = async () => {
     if(!props.loggedIn)
       handleLogin();
     else {
       try {
-        const response = await sendBuyRequest(chosenCaff.Id);
+        const response = await sendBuyRequest(chosenCaff.CaffID);
         if(response.ok) {
-          saveAs('logo192.png', 'image.png');
+          const buyResponse: BuyResponse = await response.json();
+          saveAs(b64toBlob(buyResponse.File), buyResponse.CaffName + 'caff');
         } else {
-          saveAs('logo192.png', 'image.png');
+          console.error(response.statusText);
         }
       } catch(error){
         console.error(error);
-        saveAs('logo192.png', 'image.png');
       }
     }     
   };
 
   const sendBuyRequest= async (id: number) => {
-    const response = await fetch(backendURL + '/caff/' + id, {
+    const response = await fetch(backendURL + '/caff/purchase/' + id, {
       method: 'GET',
       headers: {
        'Accept': 'application/json',
@@ -189,7 +216,7 @@ const BrowsePage = (props: BrowsePageProps) => {
     
     const sanitized=DOMPurify.sanitize(currentComment);
     try {
-      const response = await sendComment(chosenCaff.Id, sanitized);
+      const response = await sendComment(chosenCaff.CaffID, sanitized);
       if(response.ok) {
         setComments([...comments, { CommentID: 1, Text: sanitized }]);
         setCurrentComment('');
@@ -204,7 +231,7 @@ const BrowsePage = (props: BrowsePageProps) => {
   };
 
   const sendComment= async (id: number, data: string) => {
-    const response = await fetch(backendURL + '/comments/' + id, {
+    const response = await fetch(backendURL + '/comments/add/' + id, {
       method: 'POST',
       headers: {
        'Accept': 'application/json',
@@ -212,13 +239,17 @@ const BrowsePage = (props: BrowsePageProps) => {
        'Authorization': 'Bearer ' + props.token
       },
       body: JSON.stringify({
-        Text: data
+        text: data
       })
     });
     return response;
   };
 
   const handleCommentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if(event.target.value.length > 500) {
+      alert('Comment too long!');
+      return;
+    }
     setCurrentComment(event.target.value);
   };
 
@@ -241,7 +272,9 @@ const BrowsePage = (props: BrowsePageProps) => {
     try {
       const response = await uploadCAFF(selectedFile);
       if(response.ok) {
-        alert('Succesful upload!')
+        alert('Succesful upload!');
+        const responseCaff = await response.json();
+        props.addCaffToList(responseCaff);
       } else {
         console.error(response.statusText);
       }
@@ -251,14 +284,16 @@ const BrowsePage = (props: BrowsePageProps) => {
 	};
 
   const uploadCAFF = async (data: File) => {
-    const response = await fetch(backendURL + '/caff', {
+    const formData = new FormData();
+    formData.append('files', data);
+    const response = await fetch(backendURL + '/caff/upload', {
       method: 'POST',
       headers: {
        'Accept': 'application/json',
        'Content-Type': 'application/json',
        'Authorization': 'Bearer ' + props.token
       },
-      body: JSON.stringify(data)
+      body: formData
     });
     return response;
   };
@@ -311,18 +346,17 @@ const BrowsePage = (props: BrowsePageProps) => {
       <ImageList variant="masonry" cols={6} gap={20}>
         {props.CAFFs.map((caff) => (
           caff.CaffName.startsWith(filter) ? 
-          <ImageListItem key={caff.Id} onClick={() => handleOpenModal(caff.Id)}>
+          <ImageListItem key={caff.CaffID} onClick={() => handleOpenModal(caff.CaffID)}>
             <img
               width="100px"
               height="100px"
               src={`${caff.bitmap}?w=248&fit=crop&auto=format`}
               srcSet={`${caff.bitmap}?w=248&fit=crop&auto=format&dpr=2 2x`}
-              alt={caff.Id.toString()}
+              alt={caff.CaffID.toString()}
               loading="lazy"
             />
             <ImageListItemBar
               title={caff.CaffName}
-              subtitle={caff.Price.toFixed(2) + ' ft.'}
             />
           </ImageListItem> 
           : <div />
@@ -346,13 +380,10 @@ const BrowsePage = (props: BrowsePageProps) => {
                   style={{backgroundColor: "white"}}
                   src={`${chosenCaff.bitmap}?w=248&fit=crop&auto=format`}
                   srcSet={`${chosenCaff.bitmap}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                  alt={chosenCaff.Id.toString()}
+                  alt={chosenCaff.CaffID.toString()}
                   loading="lazy"
                 />           
                 <BootstrapButton style={{ color: 'white', backgroundColor: '#0063cc', marginTop: "20px"}} onClick={handleBuy}>Buy</BootstrapButton>
-                <Typography id="modal-modal-description" sx={{ mt: 2 }} align="right" color="#0063cc" variant="h5" style={{marginTop: "-35px"}}>
-                  {chosenCaff.Price.toFixed(2) + ' ft.'}
-                </Typography>
               </Box>
             </Grid>
             <Grid xs={8} sx={{height: 0}}>
