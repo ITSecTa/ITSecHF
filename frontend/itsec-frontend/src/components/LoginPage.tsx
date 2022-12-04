@@ -56,7 +56,6 @@ const LoginPage = (props: LoginPageProps) => {
   }
 
   const saveCredentials = (email: string, token: string) => {
-    console.log(token);
     props.setUser({Email: email, Token: token});
     props.setIsLoggedIn(true);
   }
