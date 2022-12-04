@@ -5,13 +5,13 @@ export interface User {
 
 export interface CAFFFile {
   Id: number,
-  Name: string,
+  CaffName: string,
   Price: number,
-  Source: string,
+  bitmap: string,
 };
 
 export interface Comment {
-  UserName: string,
+  CommentID: number,
   Text: string
 };
 
@@ -20,47 +20,47 @@ export const AppUser: User = {
     Token: "abc123"
 };
 
-export const defaultCaff: CAFFFile = { Id: -1, Name: "", Price: -1, Source: ""};
+export const defaultCaff: CAFFFile = { Id: -1, CaffName: "", Price: -1, bitmap: ""};
 
 export const CAFFs: CAFFFile[] = [
-  { Id: 1, Name: "caff1", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 2, Name: "caff2", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 3, Name: "caff3", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 4, Name: "caff4", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 5, Name: "caff5", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 6, Name: "caff6", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 7, Name: "caff7", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 8, Name: "caff8", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 9, Name: "caff9", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 10, Name: "caff10", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 11, Name: "caff11", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 12, Name: "caff12", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 13, Name: "caff13", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 14, Name: "caff14", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 15, Name: "caff15", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 16, Name: "caff16", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 17, Name: "caff17", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 18, Name: "caff18", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 19, Name: "caff19", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 20, Name: "caff20", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 21, Name: "caff21", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 22, Name: "caff22", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
-  { Id: 23, Name: "caff23", Price: (Math.random() * (10000 - 100) + 100), Source: "logo512.png"},
+  { Id: 1, CaffName: "caff1", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 2, CaffName: "caff2", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 3, CaffName: "caff3", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 4, CaffName: "caff4", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 5, CaffName: "caff5", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 6, CaffName: "caff6", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 7, CaffName: "caff7", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 8, CaffName: "caff8", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 9, CaffName: "caff9", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 10, CaffName: "caff10", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 11, CaffName: "caff11", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 12, CaffName: "caff12", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 13, CaffName: "caff13", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 14, CaffName: "caff14", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 15, CaffName: "caff15", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 16, CaffName: "caff16", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 17, CaffName: "caff17", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 18, CaffName: "caff18", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 19, CaffName: "caff19", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 20, CaffName: "caff20", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 21, CaffName: "caff21", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 22, CaffName: "caff22", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
+  { Id: 23, CaffName: "caff23", Price: (Math.random() * (10000 - 100) + 100), bitmap: "logo512.png"},
 ];
 
 export const Comments: Comment[] = [
-  { UserName: "Valami User", Text: "Some comment" },
-  { UserName: "user2", Text: "Short comment"},
-  { UserName: "usgagaer3", Text: "Very long comenttg sgjaglna glnagjag jagalgbagb aglblgb algbalgbalgba lgbalgbalgbal gbalgbal bgalgblagla gblagab"},
-  { UserName: "user1", Text: "Multi\nLine\nComment"},
-  { UserName: "usgagager5", Text: "Some comment"},
-  { UserName: "user2", Text: "Multi\nLine\nComment"},
-  { UserName: "user6", Text: "Some comment"},
-  { UserName: "usefagagr6", Text: "Very long comentt gs gjaglnag lnagjagj agalgbagbagl blgbalgba lgbalgbalgbal gbalgbalgba lgbalbg algblagl agblagab"},
-  { UserName: "user1", Text: "Some comment"},
-  { UserName: "user7", Text: "Multi\nLine\nComment"},
-  { UserName: "user4", Text: "Some comment"},
-  { UserName: "useragagag3", Text: "Short comment"},
+  { CommentID: 1, Text: "Some comment" },
+  { CommentID: 1, Text: "Short comment"},
+  { CommentID: 1, Text: "Very long comenttg sgjaglna glnagjag jagalgbagb aglblgb algbalgbalgba lgbalgbalgbal gbalgbal bgalgblagla gblagab"},
+  { CommentID: 1, Text: "Multi\nLine\nComment"},
+  { CommentID: 1, Text: "Some comment"},
+  { CommentID: 1, Text: "Multi\nLine\nComment"},
+  { CommentID: 1, Text: "Some comment"},
+  { CommentID: 1, Text: "Very long comentt gs gjaglnag lnagjagj agalgbagbagl blgbalgba lgbalgbalgbal gbalgbalgba lgbalbg algblagl agblagab"},
+  { CommentID: 1, Text: "Some comment"},
+  { CommentID: 1, Text: "Multi\nLine\nComment"},
+  { CommentID: 1, Text: "Some comment"},
+  { CommentID: 1, Text: "Short comment"},
 ];
 
-export const defaultComment: Comment = { UserName: "", Text: "" };
+export const defaultComment: Comment = { CommentID: 0, Text: "" };
