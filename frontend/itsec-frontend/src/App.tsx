@@ -9,9 +9,9 @@ import RegisterPage from './components/RegisterPage';
 import { backendURL } from './globalVars';
 
 const App = () => {
-  const [user, setUser] = useState<User>({Email: 'agaga', Token: 'agaga'});
+  const [user, setUser] = useState<User>({Email: '', Token: ''});
   const [caffs, setCaffs] = useState([defaultCaff]);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   useEffect(() => {
     const fetchData = async () => {

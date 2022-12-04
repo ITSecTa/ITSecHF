@@ -84,6 +84,7 @@ const stringAvatar = (name: string) => {
 
 const BrowsePage = (props: BrowsePageProps) => {
   const [filter, setFilter] = useState('');
+  const [fileName, setFileName] = useState('');
   const [chosenCaff, setChosenCaff] = useState(defaultCaff);
   const [modalOpen, setModalOpen] = useState(false);
   const [comments, setComments] = useState([defaultComment]);
@@ -101,6 +102,15 @@ const BrowsePage = (props: BrowsePageProps) => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const sanitized=DOMPurify.sanitize(event.target.value);
     setFilter(sanitized);
+  };
+
+  const handleFileNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const sanitized=DOMPurify.sanitize(event.target.value);
+    if(event.target.value.length > 50) {
+      alert('Filename too long!');
+      return;
+    }
+    setFileName(sanitized);
   };
 
   const handleOpenModal = async (id: string) => {
@@ -263,6 +273,11 @@ const BrowsePage = (props: BrowsePageProps) => {
       return;
     }
 
+    if(fileName === '') {
+      alert('Please provide a name!');
+      return;
+    }
+
     try {
       const response = await uploadCAFF(selectedFile);
       if(response.ok) {
@@ -279,7 +294,7 @@ const BrowsePage = (props: BrowsePageProps) => {
 
   const uploadCAFF = async (data: File) => {
     const formData = new FormData();
-    formData.append('file', data);
+    formData.append('file', new File([data], fileName, {type: data.type}));
     const response = await fetch(backendURL + '/caff/upload', {
       method: 'POST',
       headers: {
@@ -299,7 +314,14 @@ const BrowsePage = (props: BrowsePageProps) => {
             ITSecTa
           </Typography>
           {props.loggedIn ? (
-            <Box sx={{position: 'absolute', marginLeft: 15}}>
+            <Box sx={{position: 'absolute', marginLeft: 15, marginTop: 2}}>
+              <TextField
+                id="outlined-multiline-flexible"
+                label="FileName"
+                value={fileName}
+                onChange={handleFileNameChange}
+                style={{paddingRight: 30, marginTop: -8}}
+              />
               <BootstrapButton onClick={handleUpload}>Upload</BootstrapButton>
               <input style={{paddingLeft: 30}} type="file" name="file" onChange={changeHandler} />
             </Box>)
