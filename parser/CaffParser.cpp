@@ -17,6 +17,10 @@ std::vector<CAFF::Block> CaffParser::parse_caff(const std::filesystem::path &pat
         throw std::domain_error("No such file!");
     }
 
+    if (file_size(path) > 10'000'000) { // 10 MB
+        throw std::length_error("CAFF size can't be bigger than 10 MB!");
+    }
+
     std::ifstream file{path, std::ios::binary | std::ios::in};
     std::vector<uint8_t> caff{std::istreambuf_iterator<char>(file), {}};
 
@@ -149,6 +153,11 @@ bitmap_image CaffParser::get_caff_preview(CIFF ciff) {
 
 void CaffParser::save_caff_preview(const CIFF& ciff, const std::string& filename) {
     bitmap_image image = CaffParser::get_caff_preview(ciff);
+
+    if (std::vector{image.data()}.size() * sizeof(unsigned char) > 3'000'000) { // 3 MB
+        throw std::length_error("BMP image data can't be bigger than 3 MB!");
+    }
+
     image.save_image(filename);
 }
 
