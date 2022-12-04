@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
-import { CAFFFile, CAFFs, defaultCaff, User } from './appProps';
+import { CAFFFile, DefaultCaffs, defaultCaff, User } from './appProps';
 import BrowsePage from './components/BrowsePage';
 import LoginPage from './components/LoginPage';
 import ProfilePage from './components/ProfilePage';
@@ -12,7 +12,6 @@ const App = () => {
   const [user, setUser] = useState<User>({Email: '', Token: ''});
   const [caffs, setCaffs] = useState([defaultCaff]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const token = '';
   
   useEffect(() => {
     const fetchData = async () => {
@@ -22,10 +21,10 @@ const App = () => {
           const caffResponse: CAFFFile[] = await response.json();
           setCaffs(caffResponse);
         } else {
-          setCaffs(CAFFs);
+          setCaffs(DefaultCaffs);
         }
       } catch (error) {
-        setCaffs(CAFFs);
+        setCaffs(DefaultCaffs);
         console.error(error);
       }
     };
@@ -54,7 +53,7 @@ const App = () => {
         <Routes>
           <Route path="login" element={<LoginPage LoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} setUser={setUser} />} />
           <Route path="register" element={<RegisterPage LoggedIn={isLoggedIn} />} />
-          <Route path="/" element={<BrowsePage CAFFs={caffs} loggedIn={isLoggedIn} user={user} token={token} addCaffToList={addCaffToList}/>} />
+          <Route path="/" element={<BrowsePage CAFFs={caffs} loggedIn={isLoggedIn} user={user} token={user.Token} addCaffToList={addCaffToList}/>} />
           <Route path="profile" element={<ProfilePage User={user} LoggedIn={isLoggedIn} setUser={setUser} setIsLoggedIn={setIsLoggedIn} />} />
         </Routes>
       </BrowserRouter>

@@ -113,16 +113,16 @@ const BrowsePage = (props: BrowsePageProps) => {
     setFilter(sanitized);
   };
 
-  const handleOpenModal = async (id: number) => {
+  const handleOpenModal = async (id: string) => {
     setModalOpen(true);
-    const caff:any = props.CAFFs.find(caff => caff.CaffID === id);
+    const caff:any = props.CAFFs.find(caff => caff.caffID === id);
     setChosenCaff(typeof(caff) === 'undefined' ? defaultCaff : caff);
 
     try {
       const response = await getCommentsForCAFF(id);
       if(response.ok) {
-        const commentsResponse: Comment[] = await response.json();
-        setComments(commentsResponse);
+        const commentsResponse = await response.json();
+        setComments(commentsResponse.comments);
       } else {
         setComments(Comments);
       }
@@ -132,7 +132,7 @@ const BrowsePage = (props: BrowsePageProps) => {
     }
   };
 
-  const getCommentsForCAFF = async (id: number) => {
+  const getCommentsForCAFF = async (id: string) => {
     const response = await fetch(backendURL + '/comments/' + id, {
       method: 'GET',
       headers: {
@@ -148,24 +148,23 @@ const BrowsePage = (props: BrowsePageProps) => {
     setChosenCaff(defaultCaff);
   };
 
-  const b64toBlob = (b64Data: string, contentType='', sliceSize=512) => {
-    const byteCharacters = atob(b64Data);
-    const byteArrays = [];
-  
-    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-      const slice = byteCharacters.slice(offset, offset + sliceSize);
-  
-      const byteNumbers = new Array(slice.length);
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-  
-      const byteArray = new Uint8Array(byteNumbers);
-      byteArrays.push(byteArray);
-    }
-  
-    const blob = new Blob(byteArrays, {type: contentType});
-    return blob;
+  const b64toBlob = (str: string) => {
+  // decode base64
+  var imageContent = atob(str);
+
+  // create an ArrayBuffer and a view (as unsigned 8-bit)
+  var buffer = new ArrayBuffer(imageContent.length);
+  var view = new Uint8Array(buffer);
+
+  // fill the view, using the decoded base64
+  for(var n = 0; n < imageContent.length; n++) {
+    view[n] = imageContent.charCodeAt(n);
+  }
+
+  // convert ArrayBuffer to Blob
+  var blob = new Blob([buffer], { type: "caff" });
+
+  return blob;
   }
 
   const handleBuy = async () => {
@@ -173,10 +172,14 @@ const BrowsePage = (props: BrowsePageProps) => {
       handleLogin();
     else {
       try {
-        const response = await sendBuyRequest(chosenCaff.CaffID);
+        const response = await sendBuyRequest(chosenCaff.caffID);
         if(response.ok) {
-          const buyResponse: BuyResponse = await response.json();
-          saveAs(b64toBlob(buyResponse.File), buyResponse.CaffName + 'caff');
+          const buyResponse = await response.json();
+          if (buyResponse.caffName.endsWith('caff')) {
+            saveAs(b64toBlob(buyResponse.file), buyResponse.caffName);
+          } else {
+            saveAs(b64toBlob(buyResponse.file), buyResponse.caffName + '.caff');
+          }
         } else {
           console.error(response.statusText);
         }
@@ -186,7 +189,7 @@ const BrowsePage = (props: BrowsePageProps) => {
     }     
   };
 
-  const sendBuyRequest= async (id: number) => {
+  const sendBuyRequest= async (id: string) => {
     const response = await fetch(backendURL + '/caff/purchase/' + id, {
       method: 'GET',
       headers: {
@@ -216,21 +219,21 @@ const BrowsePage = (props: BrowsePageProps) => {
     
     const sanitized=DOMPurify.sanitize(currentComment);
     try {
-      const response = await sendComment(chosenCaff.CaffID, sanitized);
+      const response = await sendComment(chosenCaff.caffID, sanitized);
       if(response.ok) {
-        setComments([...comments, { CommentID: 1, Text: sanitized }]);
+        setComments([...comments, { commentID: "", text: sanitized }]);
         setCurrentComment('');
       } else {
         console.error(response.statusText);
       }
     } catch(error){
       console.error(error);
-      setComments([...comments, { CommentID: 1, Text: sanitized }]);
+      setComments([...comments, { commentID: "", text: sanitized }]);
       setCurrentComment('');
     }
   };
 
-  const sendComment= async (id: number, data: string) => {
+  const sendComment= async (id: string, data: string) => {
     const response = await fetch(backendURL + '/comments/add/' + id, {
       method: 'POST',
       headers: {
@@ -285,12 +288,11 @@ const BrowsePage = (props: BrowsePageProps) => {
 
   const uploadCAFF = async (data: File) => {
     const formData = new FormData();
-    formData.append('files', data);
+    formData.append('file', data);
     const response = await fetch(backendURL + '/caff/upload', {
       method: 'POST',
       headers: {
        'Accept': 'application/json',
-       'Content-Type': 'application/json',
        'Authorization': 'Bearer ' + props.token
       },
       body: formData
@@ -345,18 +347,17 @@ const BrowsePage = (props: BrowsePageProps) => {
       <Box marginTop="60px"/>
       <ImageList variant="masonry" cols={6} gap={20}>
         {props.CAFFs.map((caff) => (
-          caff.CaffName.startsWith(filter) ? 
-          <ImageListItem key={caff.CaffID} onClick={() => handleOpenModal(caff.CaffID)}>
+          caff.caffName.startsWith(filter) ? 
+          <ImageListItem key={caff.caffID} onClick={() => handleOpenModal(caff.caffID)}>
             <img
               width="100px"
               height="100px"
-              src={`${caff.bitmap}?w=248&fit=crop&auto=format`}
-              srcSet={`${caff.bitmap}?w=248&fit=crop&auto=format&dpr=2 2x`}
-              alt={caff.CaffID.toString()}
+              src={`data:image/bmp;base64,${caff.bitmap}`}
+              alt={caff.caffID.toString()}
               loading="lazy"
             />
             <ImageListItemBar
-              title={caff.CaffName}
+              title={caff.caffName}
             />
           </ImageListItem> 
           : <div />
@@ -372,15 +373,14 @@ const BrowsePage = (props: BrowsePageProps) => {
             <Grid xs={8} sx={{height: 0}}>
               <Box sx={style}>
                 <Typography id="modal-modal-title" variant="h2" component="h2" align="center" color="#0063cc">
-                  {chosenCaff.CaffName}
+                  {chosenCaff.caffName}
                 </Typography>
                 <img
                   width="400px"
                   height="400px"
                   style={{backgroundColor: "white"}}
-                  src={`${chosenCaff.bitmap}?w=248&fit=crop&auto=format`}
-                  srcSet={`${chosenCaff.bitmap}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                  alt={chosenCaff.CaffID.toString()}
+                  src={`data:image/jpeg;base64,${chosenCaff.bitmap}`}
+                  alt={chosenCaff.caffID.toString()}
                   loading="lazy"
                 />           
                 <BootstrapButton style={{ color: 'white', backgroundColor: '#0063cc', marginTop: "20px"}} onClick={handleBuy}>Buy</BootstrapButton>
@@ -390,7 +390,7 @@ const BrowsePage = (props: BrowsePageProps) => {
               <Box sx={{height: 0}}>
                 <List sx={{ maxWidth: 360, maxHeight: 500, left: 60, top: 73.5, bgcolor: 'background.paper', overflow: 'auto',  }}>
                   {comments.map((comment) => (
-                    <ListItem alignItems="flex-start" key={comment.Text + 'Anonymous'}>
+                    <ListItem alignItems="flex-start" key={comment.text + 'Anonymous'}>
                       <ListItemAvatar>
                         <Avatar {...stringAvatar('Anonymous')} />
                       </ListItemAvatar>
@@ -404,7 +404,7 @@ const BrowsePage = (props: BrowsePageProps) => {
                               variant="body2"
                               color="text.primary"
                             >
-                              {comment.Text}
+                              {comment.text}
                             </Typography>                           
                           </>
                         }
