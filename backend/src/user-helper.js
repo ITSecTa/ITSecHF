@@ -70,7 +70,14 @@ export async function authenticateToken(req, res, next) {
 }
 
 export async function isEmailValid(email) {
-    return emailValidator.validate(email)
+    return emailValidator.validate({
+    email: email,
+    validateRegex: true,
+    validateMx: true,
+    validateTypo: true,
+    validateDisposable: true,
+    validateSMTP: false,    // Several email providers refuse SMTP
+  })
 }
   
 export async function isExistRegistration(email) {
@@ -155,7 +162,7 @@ export async function setUserData(body, userInfo) {
             const hash = await hashPassword(body.newPassword);
             const updateDocument = { $set: { email: body.newEmail, password: hash } };
             await users.updateOne(filter, updateDocument);
-            if(neeedToken) token = generateAccessToken(body.newEmail, userInfo.userID);
+            if(needToken) token = generateAccessToken(body.newEmail, userInfo.userID);
           } catch(error){
             return { code: 500, data: { message: 'Internal server error.' }};
         }  
@@ -179,7 +186,7 @@ export async function setUserData(body, userInfo) {
       try{
         const updateDocument = { $set: { email: body.newEmail } };
         await users.updateOne(filter, updateDocument);
-        if(neeedToken) token = generateAccessToken(body.newEmail, userInfo.userID);
+        if(needToken) token = generateAccessToken(body.newEmail, userInfo.userID);
       } catch(error){
         return { code: 500, data: { message: 'Internal server error.' }};
         }  
