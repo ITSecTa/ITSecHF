@@ -15,11 +15,6 @@ interface BrowsePageProps {
   addCaffToList: (caff: CAFFFile) => Promise<void>
 };
 
-interface BuyResponse {
-  CaffName: string,
-  File: string
-}
-
 const BootstrapButton = styled(Button)({
   color: 'black',
   boxShadow: 'none',
@@ -97,13 +92,8 @@ const BrowsePage = (props: BrowsePageProps) => {
   const navigate = useNavigate();
 
   const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '38%',
-    transform: 'translate(-50%, -50%)',
     width: 400,
     backgroundColor: 'white',
-    border: '2px solid #000',
     boxShadow: 24,
     p: 4
   };
@@ -119,6 +109,7 @@ const BrowsePage = (props: BrowsePageProps) => {
     setChosenCaff(typeof(caff) === 'undefined' ? defaultCaff : caff);
 
     try {
+      setComments(Comments);
       const response = await getCommentsForCAFF(id);
       if(response.ok) {
         const commentsResponse = await response.json();
@@ -308,7 +299,7 @@ const BrowsePage = (props: BrowsePageProps) => {
             ITSecTa
           </Typography>
           {props.loggedIn ? (
-            <Box sx={{paddingRight: 85}}>
+            <Box sx={{position: 'absolute', marginLeft: 15}}>
               <BootstrapButton onClick={handleUpload}>Upload</BootstrapButton>
               <input style={{paddingLeft: 30}} type="file" name="file" onChange={changeHandler} />
             </Box>)
@@ -369,64 +360,60 @@ const BrowsePage = (props: BrowsePageProps) => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
         >
-          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} columns={16} sx={{height: 0}}>
-            <Grid xs={8} sx={{height: 0}}>
-              <Box sx={style}>
-                <Typography id="modal-modal-title" variant="h2" component="h2" align="center" color="#0063cc">
-                  {chosenCaff.caffName}
-                </Typography>
-                <img
-                  width="400px"
-                  height="400px"
-                  style={{backgroundColor: "white"}}
-                  src={`data:image/jpeg;base64,${chosenCaff.bitmap}`}
-                  alt={chosenCaff.caffID.toString()}
-                  loading="lazy"
-                />           
-                <BootstrapButton style={{ color: 'white', backgroundColor: '#0063cc', marginTop: "20px"}} onClick={handleBuy}>Buy</BootstrapButton>
-              </Box>
-            </Grid>
-            <Grid xs={8} sx={{height: 0}}>
-              <Box sx={{height: 0}}>
-                <List sx={{ maxWidth: 360, maxHeight: 500, left: 60, top: 73.5, bgcolor: 'background.paper', overflow: 'auto',  }}>
-                  {comments.map((comment) => (
-                    <ListItem alignItems="flex-start" key={comment.text + 'Anonymous'}>
-                      <ListItemAvatar>
-                        <Avatar {...stringAvatar('Anonymous')} />
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary='Anonymous'
-                        secondary={
-                          <>
-                            <Typography
-                              sx={{ display: 'inline' }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                              {comment.text}
-                            </Typography>                           
-                          </>
-                        }
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-                  <Box sx={{ width: 360, height: 87, top: 65, left: 60, position: 'relative', bgcolor: 'background.paper', overflow: 'auto',  }}>
-                    <TextField
-                      margin="normal"
-                      id="comment-text"
-                      label="Comment"
-                      name="Comment"
-                      autoFocus
-                      multiline
-                      value={currentComment}
-                      onChange={handleCommentChange}
+          <Grid container sx={{position: 'absolute', top: '13.8%', left: '25%'}}>
+            <Box sx={style}>
+              <Typography id="modal-modal-title" variant="h2" component="h2" align="center" color="#0063cc">
+                {chosenCaff.caffName}
+              </Typography>
+              <img
+                width="400px"
+                height="400px"
+                style={{backgroundColor: "white"}}
+                src={`data:image/jpeg;base64,${chosenCaff.bitmap}`}
+                alt={chosenCaff.caffID.toString()}
+                loading="lazy"
+              />           
+              <BootstrapButton style={{ color: 'white', backgroundColor: '#0063cc', marginTop: "20px"}} onClick={handleBuy}>Buy</BootstrapButton>
+            </Box>
+            <Box sx={{height: 0, }}>
+              <List sx={{ maxWidth: 360, height: 423, bgcolor: 'background.paper', overflow: 'auto',  }}>
+                {comments.map((comment) => (
+                  <ListItem alignItems="flex-start" key={comment.text + 'Anonymous'}>
+                    <ListItemAvatar>
+                      <Avatar {...stringAvatar('Anonymous')} />
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary='Anonymous'
+                      secondary={
+                        <>
+                          <Typography
+                            sx={{ display: 'inline' }}
+                            component="span"
+                            variant="body2"
+                            color="text.primary"
+                          >
+                            {comment.text}
+                          </Typography>                           
+                        </>
+                      }
                     />
-                    <BootstrapButton style={{ position: 'fixed', color: 'white', backgroundColor: props.loggedIn ? '#0063cc' : 'grey', marginTop: "20px", marginLeft: "20px"}} onClick={handleComment}>Comment</BootstrapButton>
-                  </Box>
-                </Box>
-              </Grid>
+                  </ListItem>
+                ))}
+              </List>
+              <Box sx={{ width: 360, height: 87, position: 'relative', bgcolor: 'background.paper', overflow: 'auto',  }}>
+                <TextField
+                  margin="normal"
+                  id="comment-text"
+                  label="Comment"
+                  name="Comment"
+                  autoFocus
+                  multiline
+                  value={currentComment}
+                  onChange={handleCommentChange}
+                />
+                <BootstrapButton style={{ position: 'fixed', color: 'white', backgroundColor: props.loggedIn ? '#0063cc' : 'grey', marginTop: "20px", marginLeft: "20px"}} onClick={handleComment}>Comment</BootstrapButton>
+              </Box>
+            </Box>
           </Grid>
       </Modal>
     </Box>
