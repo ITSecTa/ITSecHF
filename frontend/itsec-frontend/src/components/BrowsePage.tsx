@@ -2,6 +2,7 @@ import { ImageList, ImageListItem, ImageListItemBar, Box, AppBar, Toolbar, Typog
   Modal, styled, Grid, List, ListItem, ListItemAvatar, ListItemText, Avatar } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DOMPurify from 'dompurify';
 import { CAFFFile, defaultCaff, Comments, defaultComment, User } from "../appProps";
 import { saveAs } from 'file-saver';
 import { backendURL } from "../globalVars";
@@ -102,7 +103,8 @@ const BrowsePage = (props: BrowsePageProps) => {
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilter(event.target.value);
+    const sanitized=DOMPurify.sanitize(event.target.value);
+    setFilter(sanitized);
   };
 
   const handleOpenModal = async (id: number) => {
@@ -146,7 +148,7 @@ const BrowsePage = (props: BrowsePageProps) => {
       try {
         const response = await sendBuyRequest(chosenCaff.Id);
         if(response.ok) {
-          setComments(await response.json());
+          saveAs('logo192.png', 'image.png');
         } else {
           saveAs('logo192.png', 'image.png');
         }
@@ -184,18 +186,19 @@ const BrowsePage = (props: BrowsePageProps) => {
   const handleComment = async () => {
     if(!props.loggedIn || currentComment === '')
       return;
-
+    
+    const sanitized=DOMPurify.sanitize(currentComment);
     try {
-      const response = await sendComment(chosenCaff.Id, currentComment);
+      const response = await sendComment(chosenCaff.Id, sanitized);
       if(response.ok) {
-        setComments([...comments, { CommentID: 1, Text: currentComment }]);
+        setComments([...comments, { CommentID: 1, Text: sanitized }]);
         setCurrentComment('');
       } else {
         console.error(response.statusText);
       }
     } catch(error){
       console.error(error);
-      setComments([...comments, { CommentID: 1, Text: currentComment }]);
+      setComments([...comments, { CommentID: 1, Text: sanitized }]);
       setCurrentComment('');
     }
   };
