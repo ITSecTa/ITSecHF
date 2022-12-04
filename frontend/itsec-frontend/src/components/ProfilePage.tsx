@@ -1,20 +1,24 @@
 import { Alert, AppBar, Avatar, Box, Button, Grid, Link, Modal, TextField, Toolbar, Typography } from "@mui/material";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { User } from "../appProps";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { passwordStrength } from 'check-password-strength'
 import { useNavigate } from "react-router-dom";
 
 interface ProfilePageProps {
     User: User,
-    LoggedIn: boolean
+    LoggedIn: boolean,
+    setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>
+    setUser: React.Dispatch<React.SetStateAction<User>>
 };
 
 const ProfilePage = (props: ProfilePageProps) => {
   const navigate = useNavigate();
 
-  if(!props.LoggedIn)
-    navigate('/login');
+  useEffect(() => {
+    if (!props.LoggedIn)
+      navigate('/login');
+  }, []);
 
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
@@ -40,7 +44,7 @@ const ProfilePage = (props: ProfilePageProps) => {
 
   const validateEmail = (value: any) => {
     if (!value) return 'Please enter your email address.';
-    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!emailRegex.test(value)) return 'Invalid email address.';
     return '';
   }
@@ -92,21 +96,47 @@ const ProfilePage = (props: ProfilePageProps) => {
   }    
 
   const handleLogout = () => {
-    // TODO
+    props.setUser({Email: '', Token: ''});
+    props.setIsLoggedIn(false);
     navigate('/');
   }
 
-  const sendEmailChangeRequest = (newAddress: string): any => {
-    //TODO
-    console.log(newAddress);
-    return {ok: false};
+  const handleGoBack = () => {
+    navigate('/');
   }
 
-  const sendPasswordChangeRequest = (newPassword: any, newPasswordConfirm: any): any => {
-    //TODO
-    console.log(newPassword);
-    console.log(newPasswordConfirm);
-    return {ok: false};
+  const sendEmailChangeRequest = async (newEmail: string): Promise<Response> => {
+    const response = await fetch('http://localhost:8080/user/modify', {
+      method: 'POST',
+      headers: {
+       'Accept': 'application/json',
+       'Content-Type': 'application/json',
+       'Authorization': 'Bearer ' + props.User.Token
+      },
+      body: JSON.stringify({
+        "newEmail": newEmail
+      })
+    });
+    return response;
+  }
+
+  const sendPasswordChangeRequest = async (newPassword: string): Promise<Response> => {
+    const response = await fetch('http://localhost:8080/user/modify', {
+      method: 'POST',
+      headers: {
+       'Accept': 'application/json',
+       'Content-Type': 'application/json',
+       'Authorization': 'Bearer ' + props.User.Token
+      },
+      body: JSON.stringify({
+        "newPassword": newPassword
+      })
+    });
+    return response;
+  }
+
+  const saveCredentials = (email: string, token: string) => {
+    props.setUser({Email: email, Token: token});
   }
 
   const handleEmailSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -125,6 +155,7 @@ const ProfilePage = (props: ProfilePageProps) => {
     if (!emailErr) {
       let response = await sendEmailChangeRequest(email!!.toString());
       setEmailModalOpen(false);
+      console.log(response);
       if (response.ok) {
         setFormState({
           ...formState,
@@ -132,13 +163,23 @@ const ProfilePage = (props: ProfilePageProps) => {
           formMessage: 'Email address changed successfully!',
           formError: false
         });
+        saveCredentials(email!!.toString(), (await response.json()).token);
+      }
+      else if (response.status === 400) {
+        // Server rejected email address
+        setFormState({
+          ...formState,
+          errorMsgEmail: emailErr,
+          formMessage: 'Email address invalid or taken.',
+          formError: true
+        });
       }
       else {
         // Server encountered error
         setFormState({
           ...formState,
           errorMsgEmail: emailErr,
-          formMessage: 'Failed to change. Please try again later.',
+          formMessage: 'Failed to change email. Please try again later.',
           formError: true
         });
       }
@@ -164,7 +205,7 @@ const ProfilePage = (props: ProfilePageProps) => {
     });
 
     if (!passwordErr && !passwordConfirmErr) {
-      let response = await sendPasswordChangeRequest(password, passwordConfirm);
+      let response = await sendPasswordChangeRequest(password!!.toString());
       setPasswordModalOpen(false);
       if (response.ok) {
         setFormState({
@@ -174,6 +215,17 @@ const ProfilePage = (props: ProfilePageProps) => {
           formMessage: 'Password changed successfully!',
           formError: false
         });
+        console.log(response);
+      }
+      else if (response.status === 400) {
+        // Server rejected password
+        setFormState({
+          ...formState,
+          errorMsgPassword: passwordErr,
+          errorMsgConfirmPassword: passwordConfirmErr,
+          formMessage: 'Please provide a stronger password.',
+          formError: true
+        });
       }
       else {
         // Server encountered error
@@ -181,7 +233,7 @@ const ProfilePage = (props: ProfilePageProps) => {
           ...formState,
           errorMsgPassword: passwordErr,
           errorMsgConfirmPassword: passwordConfirmErr,
-          formMessage: 'Failed to change. Please try again later.',
+          formMessage: 'Failed to change password. Please try again later.',
           formError: true
         });
       }
@@ -267,7 +319,7 @@ const ProfilePage = (props: ProfilePageProps) => {
               </Button>
             </Grid>
             <Grid item xs={12}>
-              <Link href='/' variant="body2">
+              <Link href='#' onClick={handleGoBack} variant="body2">
                 Go back
               </Link>
             </Grid>

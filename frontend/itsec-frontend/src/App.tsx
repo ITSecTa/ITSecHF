@@ -53,7 +53,7 @@ const App = () => {
           <Route path="login" element={<LoginPage LoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} setUser={setUser} />} />
           <Route path="register" element={<RegisterPage LoggedIn={isLoggedIn} />} />
           <Route path="/" element={<BrowsePage CAFFs={caffs} loggedIn={isLoggedIn} user={user} token={token}/>} />
-          <Route path="profile" element={<ProfilePage User={user} LoggedIn={isLoggedIn}/>} />
+          <Route path="profile" element={<ProfilePage User={user} LoggedIn={isLoggedIn} setUser={setUser} setIsLoggedIn={setIsLoggedIn} />} />
         </Routes>
       </BrowserRouter>
     </div>
