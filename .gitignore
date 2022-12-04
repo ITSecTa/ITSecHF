@@ -6,6 +6,7 @@
 # Built Visual Studio Code Extensions
 *.vsix
 
+
 # dependencies
 ./frontend/itsec-frontend/node_modules
 /.pnp
@@ -27,3 +28,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# node_modules for backend
+node_modules

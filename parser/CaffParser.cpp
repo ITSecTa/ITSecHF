@@ -10,11 +10,15 @@ std::vector<CAFF::Block> CaffParser::parse_caff(const std::filesystem::path &pat
     std::vector<CAFF::Block> blocks{};
 
     if (path.extension() != ".caff") {
-        throw std::runtime_error("That's not a CAFF file!");
+        throw std::domain_error("That's not a CAFF file!");
     }
 
     if (!std::filesystem::exists(path)) {
-        throw std::runtime_error("No such file!");
+        throw std::domain_error("No such file!");
+    }
+
+    if (file_size(path) > 10'000'000) { // 10 MB
+        throw std::length_error("CAFF size can't be bigger than 10 MB!");
     }
 
     std::ifstream file{path, std::ios::binary | std::ios::in};
@@ -22,7 +26,7 @@ std::vector<CAFF::Block> CaffParser::parse_caff(const std::filesystem::path &pat
 
     while (!caff.empty()) {
         if (caff.size() < 1 + 8) {
-            throw std::runtime_error("Block too small!");
+            throw std::length_error("Block too small!");
         }
 
         auto type = caff[0];
@@ -30,7 +34,7 @@ std::vector<CAFF::Block> CaffParser::parse_caff(const std::filesystem::path &pat
         auto block_size = bytes_to_long(length_vector);
 
         if (1 + 8 + block_size > caff.size()) {
-            throw std::runtime_error("Block too big!");
+            throw std::length_error("Block too big!");
         }
 
         std::vector<uint8_t> data{caff.begin() + 9, caff.begin() + 9 + block_size};
@@ -48,24 +52,29 @@ std::vector<CAFF::Block> CaffParser::parse_caff(const std::filesystem::path &pat
 
 CIFF CaffParser::create_valid_ciff(const std::vector<CAFF::Block> &blocks) {
 
-    if (blocks[0].type != 1) {
-        throw std::runtime_error("Integrity check failure: incorrect first block");
+    if (blocks.empty()) {
+        throw std::domain_error("Integrity check failure: Empty file");
     }
 
-    unsigned long long header_animation_block_count = 0, actual_animation_block_count = 0;
+    if (blocks[0].type != 1) {
+        throw std::domain_error("Integrity check failure: incorrect first block");
+    }
+
+    unsigned long long header_animation_block_count = 0;
+    unsigned long long actual_animation_block_count = 0;
     CIFF ciff{};
 
     for (const auto &block: blocks) {
 
         if (block.length != block.data.size()) {
-            throw std::runtime_error("Integrity check failure: incorrect block size");
+            throw std::length_error("Integrity check failure: incorrect block size");
         }
 
         switch (block.type) {
             case 1: { // header
                 if (std::vector<uint8_t>{block.data.begin(), block.data.begin() + 4} !=
                     std::vector<uint8_t>{'C', 'A', 'F', 'F'}) {
-                    throw std::runtime_error("Integrity check failure: header block lacks magic");
+                    throw std::domain_error("Integrity check failure: header block lacks magic");
                 }
                 header_animation_block_count = bytes_to_long(
                         std::vector<uint8_t>{block.data.begin() + 12, block.data.begin() + 20});
@@ -82,11 +91,11 @@ CIFF CaffParser::create_valid_ciff(const std::vector<CAFF::Block> &blocks) {
 
                 if (std::vector<uint8_t>{ciff_data.begin(), ciff_data.begin() + 4} !=
                     std::vector<uint8_t>{'C', 'I', 'F', 'F'}) {
-                    throw std::runtime_error("Integrity check failure: animation block lacks magic");
+                    throw std::domain_error("Integrity check failure: animation block lacks magic");
                 }
 
                 if (block.data.size() < 8 + 4 + 8 + 8 + 8 + 8) {
-                    throw std::runtime_error("Integrity check failure: animation block too small");
+                    throw std::length_error("Integrity check failure: animation block too small");
                 }
 
                 ciff.header_size = bytes_to_long({ciff_data.begin() + 4, ciff_data.begin() + 12});
@@ -94,10 +103,8 @@ CIFF CaffParser::create_valid_ciff(const std::vector<CAFF::Block> &blocks) {
                 ciff.width = bytes_to_long({ciff_data.begin() + 20, ciff_data.begin() + 28});
                 ciff.height = bytes_to_long({ciff_data.begin() + 28, ciff_data.begin() + 36});
 
-                if ((ciff_data.size() - ciff.header_size) % 3 != 0
-                    || ciff.content_size % 3 != 0
-                    || ciff.content_size != ciff.width * ciff.height * 3) {
-                    throw std::runtime_error("Integrity check failure: content size invalid");
+                if (is_content_size_valid(ciff_data.size(), ciff)) {
+                    throw std::length_error("Integrity check failure: content size invalid");
                 }
 
                 ciff.image_data = std::vector<uint8_t>{ciff_data.begin() + ciff.header_size, ciff_data.end()};
@@ -106,7 +113,7 @@ CIFF CaffParser::create_valid_ciff(const std::vector<CAFF::Block> &blocks) {
                 break;
             }
             default:
-                throw std::runtime_error("Integrity check failure: invalid block type");
+                throw std::domain_error("Integrity check failure: invalid block type");
         }
 
         if (actual_animation_block_count > 0) {
@@ -116,18 +123,20 @@ CIFF CaffParser::create_valid_ciff(const std::vector<CAFF::Block> &blocks) {
 
     if ((header_animation_block_count == 0 && actual_animation_block_count != 0)
         || (header_animation_block_count != 0 && actual_animation_block_count == 0)) {
-        throw std::runtime_error("Integrity check failure: invalid animation block count");
+        throw std::domain_error("Integrity check failure: invalid animation block count");
     }
 
     return ciff;
 }
 
 bitmap_image CaffParser::get_caff_preview(CIFF ciff) {
-    bitmap_image image(ciff.width, ciff.height);
+    bitmap_image image((unsigned int)ciff.width, (unsigned int)ciff.height);
     image.clear();
 
     const auto pixel_count = ciff.content_size / 3;
-    std::vector<uint8_t> red(pixel_count), green(pixel_count), blue(pixel_count);
+    std::vector<uint8_t> red(pixel_count);
+    std::vector<uint8_t> green(pixel_count);
+    std::vector<uint8_t> blue(pixel_count);
 
     int px = 0;
     for (unsigned long long i = 0; i < ciff.content_size; i += 3) {
@@ -138,12 +147,26 @@ bitmap_image CaffParser::get_caff_preview(CIFF ciff) {
     }
 
     image.import_rgb(red.data(), green.data(), blue.data());
+    
+    const unsigned int MAXDIM = 500;
+    if (image.width() > MAXDIM || image.height() > MAXDIM) {
+        unsigned int newWidth = image.width() > MAXDIM ? MAXDIM : image.width();
+        unsigned int newHeight = image.height() > MAXDIM ? MAXDIM : image.height();
 
+        bitmap_image resized(newWidth, newHeight);
+        if (image.region(0, 0, newWidth, newHeight, resized))
+            return resized;
+    }
     return image;
 }
 
-void CaffParser::save_caff_preview(CIFF ciff, const std::string& filename) {
+void CaffParser::save_caff_preview(const CIFF& ciff, const std::string& filename) {
     bitmap_image image = CaffParser::get_caff_preview(ciff);
+
+    if (std::vector{image.data()}.size() * sizeof(unsigned char) > 1'000'000) { // 1 MB
+        throw std::length_error("BMP image data can't be bigger than 1 MB!");
+    }
+
     image.save_image(filename);
 }
 
@@ -154,4 +177,10 @@ unsigned long long CaffParser::bytes_to_long(const std::vector<uint8_t> &bytes) 
         value |= bytes[i];
     }
     return value;
+}
+
+bool CaffParser::is_content_size_valid(const unsigned long long ciff_data_size, const CIFF &ciff) {
+    return (ciff_data_size - ciff.header_size) % 3 != 0
+           || ciff.content_size % 3 != 0
+           || ciff.content_size != ciff.width * ciff.height * 3;
 }
