@@ -1,4 +1,7 @@
 import express from "express";
+import fileupload from "express-fileupload";
+import cors from "cors";
+import multer from "multer";
 import { passwordStrength } from 'check-password-strength';
 import { addUser,
    setUserData , 
@@ -11,16 +14,68 @@ import { addUser,
    authenticateToken,
    authenticateAdminToken
   } from "./user-helper.js";
-import { getCaffCollection } from "./caff-helper.js";
+import { getCaffCollection,
+   uploadCaffFile,
+   deleteCaffByAdmin,
+   getCommentsByCaffId, 
+   addCommentToCaff,
+   deleteCommentByAdmin,
+   modifyCommentByAdmin } from "./caff-helper.js";
 import dotenv from 'dotenv'; 
 
+//const upload_folder_path = __dirname + "/../temp/";
+import path from 'path';
+import {fileURLToPath} from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+
+// 👇️ "/home/john/Desktop/javascript"
+const __dirname = path.dirname(__filename);
+const output_directory = path.join(__dirname, "/../temp");
 
 const app = express();
+app.use(
+  fileupload({
+      createParentPath: true,
+  }),
+); 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-dotenv.config();
 
+app.post("/upload-file", async (req, res) => {
+  try {
+      if (!req.files) {
+          res.send({
+              status: "failed",
+              message: "No file uploaded",
+          });
+      } else {
+          let file = req.files.file;
+          //let fileExtension = file.name.split('.')[file.name.split('.').length - 1];
+
+          console.log(file);
+
+          file.mv(output_directory + "/test.png");
+          console.log("upload mappa utan")
+          res.send({
+              status: "success",
+              message: "File is uploaded",
+              data: {
+                  name: file.name,
+                  mimetype: file.mimetype,
+                  size: file.size,
+              },
+          });
+      }
+  } catch (err) {
+      res.status(500).send(err);
+  }
+});
+
+
+dotenv.config();
 const PORT = process.env.PORT || 8080;
 
 //USER ENDPOINTS
@@ -39,9 +94,7 @@ app.post('/user/login', async (req,res) => {
 
 
 app.post("/user/modify", authenticateToken, async (req, res) => {
-    console.log("token:");
     console.log(req.user);
-    console.log("tokenvege");
     const result = await setUserData(req.body, req.user);
     return res.status(result.code).send(result.data);
 });
@@ -112,16 +165,48 @@ app.get('/caff/preview', async (req,res) => {
   return res.status(result.code).send(result.data);
 });
 
-app.post('/caff/upload', authenticateToken, async (req, res) => {
- 
+app.post('/caff/upload', async (req, res) => {
+  const result = await uploadCaffFile(req.body);
+  return res.status(result.code).send(result.data);
+  //TODO: fajlfeltoltes sikerült
 });
 
-app.get('/caff/purchase', authenticateToken, async (req, res) => {
- 
+app.get('/caff/purchase', async (req, res) => {
+ //TODO el se kezdtuk
 }); 
 
 app.delete('/caff/delete', authenticateAdminToken, async (req,res) => {
-  
-})
+  const result = await deleteCaffByAdmin(req.body);
+  return res.status(result.code).send(result.data);
+});
+
+//COMMENTS ENDPOINTS
+app.get('/comments/:caffId', async (req,res) => {
+  console.log(req.params.caffId);
+  if(!req.params.caffId) res.status(404).send({message: "Not found"});
+  const result = await getCommentsByCaffId(req.params.caffId);
+  return res.status(result.code).send(result.data);
+});
+
+app.post('/comments/add/:caffId', authenticateToken, async (req, res) => {
+  console.log(req.params.caffId);
+  if(!req.params.caffId) res.status(404).send({message: "Not found"});
+  const result = await addCommentToCaff(req.params.caffId, req.body);
+  return res.status(result.code).send(result.data);
+});
+
+app.delete('/comments/delete/:caffId', authenticateAdminToken, async (req,res) => {
+  console.log(req.params.caffId);
+  if(!req.params.caffId) res.status(404).send({message: "Not found"});
+  const result = await deleteCommentByAdmin(req.params.caffId, req.body);
+  return res.status(result.code).send(result.data);
+});
+
+app.post('/comments/modify/:caffId', authenticateAdminToken , async (req, res) => {
+  console.log(req.params.caffId);
+  if(!req.params.caffId) res.status(404).send({message: "Not found"});
+  const result = await modifyCommentByAdmin(req.params.caffId, req.body);
+  return res.status(result.code).send(result.data);
+});
 
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
