@@ -3,7 +3,7 @@ import { ImageList, ImageListItem, ImageListItemBar, Box, AppBar, Toolbar, Typog
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DOMPurify from 'dompurify';
-import { CAFFFile, defaultCaff, Comments, defaultComment, User, Comment } from "../appProps";
+import { CAFFFile, defaultCaff, Comments, defaultComment, User } from "../appProps";
 import { saveAs } from 'file-saver';
 import { backendURL } from "../globalVars";
 
@@ -141,19 +141,19 @@ const BrowsePage = (props: BrowsePageProps) => {
 
   const b64toBlob = (str: string) => {
   // decode base64
-  var imageContent = atob(str);
+  const imageContent = atob(str);
 
   // create an ArrayBuffer and a view (as unsigned 8-bit)
-  var buffer = new ArrayBuffer(imageContent.length);
-  var view = new Uint8Array(buffer);
+  const buffer = new ArrayBuffer(imageContent.length);
+  let view = new Uint8Array(buffer);
 
   // fill the view, using the decoded base64
-  for(var n = 0; n < imageContent.length; n++) {
+  for(let n = 0; n < imageContent.length; n++) {
     view[n] = imageContent.charCodeAt(n);
   }
 
   // convert ArrayBuffer to Blob
-  var blob = new Blob([buffer], { type: "caff" });
+  const blob = new Blob([buffer], { type: "caff" });
 
   return blob;
   }

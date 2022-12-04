@@ -21,10 +21,8 @@ export const AppUser: User = {
 
 export const defaultCaff: CAFFFile = { caffID: "", caffName: "", bitmap: ""};
 
-export const DefaultCaffs: CAFFFile[] = [
-];
+export const DefaultCaffs: CAFFFile[] = [];
 
-export const Comments: Comment[] = [
-];
+export const Comments: Comment[] = [];
 
 export const defaultComment: Comment = { commentID: "default", text: "" };
