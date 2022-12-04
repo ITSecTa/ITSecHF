@@ -149,9 +149,9 @@ bitmap_image CaffParser::get_caff_preview(CIFF ciff) {
         unsigned int newWidth = image.width() > MAXDIM ? MAXDIM : image.width();
         unsigned int newHeight = image.height() > MAXDIM ? MAXDIM : image.height();
 
-        bitmap_image image2(newWidth, newHeight);
-        if (image.region(0, 0, newWidth, newHeight, image2))
-            return image2;
+        bitmap_image resized(newWidth, newHeight);
+        if (image.region(0, 0, newWidth, newHeight, resized))
+            return resized;
     }
     return image;
 }
