@@ -154,8 +154,8 @@ bitmap_image CaffParser::get_caff_preview(CIFF ciff) {
 void CaffParser::save_caff_preview(const CIFF& ciff, const std::string& filename) {
     bitmap_image image = CaffParser::get_caff_preview(ciff);
 
-    if (std::vector{image.data()}.size() * sizeof(unsigned char) > 3'000'000) { // 3 MB
-        throw std::length_error("BMP image data can't be bigger than 3 MB!");
+    if (std::vector{image.data()}.size() * sizeof(unsigned char) > 1'000'000) { // 1 MB
+        throw std::length_error("BMP image data can't be bigger than 1 MB!");
     }
 
     image.save_image(filename);
